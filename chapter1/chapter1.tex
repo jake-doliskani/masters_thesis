@@ -1,0 +1,437 @@
+\chapter{Elliptic Curves}
+\label{chapter:ellibase}
+
+The origin of the elliptic curves goes back to the 18th century when mathematicians tried to 
+calculate the arc length of an ellipse. This led to the study of elliptic integrals, and then 
+elliptic functions, and the brilliant works of Weierstrass. Of course, all these were happening in 
+the complex field $\vmathbb{C}$. But the theory was extended over arbitrary fields, specially finite 
+fields, afterwards, and today, there is a huge literature on elliptic curves and their applications. 
+In this chapter, we give a brief introduction to the basic concepts of the theory of elliptic curves 
+over general fields. 
+
+
+
+
+
+
+
+\section{The Weierstrass equation and the group law}
+\label{section:W-grouplaw}
+
+Let $k$ be a field. The set $\vmathbb{A}_{k}^2 = \{ (x, y) \in k \times k \}$ is called the affine 
+plane over $k$. Any nonconstant squarefree polynomial $f \in k[x,y]$ defines an affine plane curve 
+$C_f$ whose points are the zero set of $f$ in $\vmathbb{A}_k^2$. We say that $C_f$ is defined over 
+$k$. For an extension $L \supseteq k$, the zero set of $f$ in $\vmathbb{A}_L^2$ is denoted by 
+$C_f(L)$. The projective plane over $k$, denoted by $\vmathbb{P}_k^2$, is the set of all triples $(x, 
+y, z) \in k^3$ with $(x, y, z) \ne (0, 0, 0)$ modulo an equivalence relation $\sim$ where $(x, y, z) 
+\sim (x_1, y_1, z_1)$ if and only if there exists a nonzero $\mu \in k$ such that $(z_1, y_1, z_1) = 
+(\mu x, \mu y, \mu z)$. The class of the point $(x, y, z)$ is denoted by $(x: y: z)$. A projective 
+plane curve is defined similar to the affine curve except that the defining polynomial $f \in k[x, 
+y, z]$ should be homogeneous, otherwise the zero set of $f$ in $\vmathbb{P}_k^2$ is not well defined. 
+A point $(x: y: z) \in \vmathbb{P}_k^2$ is a finite point if $z \ne 0$, and a point at infinity if $z 
+= 0$. There is a natural embedding
+$$
+\setlength\arraycolsep{2pt}
+\begin{array}{llll}
+\varphi: & \vmathbb{A}_k^2 & \hookrightarrow & \vmathbb{P}_k^2 \\
+ & (x, y) & \mapsto & (x: y: 1)
+\end{array}
+$$
+A plane curve $C_f$ is said to be singular at a point $P$ if $\frac{\partial f}{\partial x}(P) = 
+\frac{\partial f}{\partial y}(P) = 0$, where the partial derivative of a polynomial is defined in 
+the usual way, and nonsingular at $P$ otherwise. The curve $C_f$ is nonsingular if it has no 
+singular points. An \emph{elliptic curve} over $k$, denoted by $E_k$, is a nonsingular projective 
+plane curve defined over $k$ by a polynomial of the form $f(x, y) = y^2z + a_1xyz + a_3yz^2 - (x^3 + 
+a_2x^2z + a_4xz^2 + a_6z^3) \in k[x, y, z]$. Thus, the points of $E_k$ are the solution set in 
+$\vmathbb{P}_k^2$ of an equation of the form
+\begin{equation}
+\label{equation:PEC}
+E_k: \quad y^2z + a_1xyz + a_3yz^2 = x^3 + a_2x^2z + a_4xz^2 + a_6z^3
+\end{equation}
+with $a_1, a_3, a_2, a_4, a_6 \in k$. If we let $z = 0$ in \refequation{equation:PEC} then $x^3 = 
+0$, and hence $(0: 1: 0)$ is the only point at infinity of $E_k$. Therefore, all point of $E_k$ are 
+of the form $(x: y: 1)$, i.e. are in the finite plane, except the above point which we denote by 
+$\infty$. So, the set of points on $E_k$ is the solution set in $\vmathbb{A}_k^2$ of 
+\begin{equation}
+\label{equation:AEC}
+\quad y^2 + a_1xy + a_3y = x^3 + a_2x^2 + a_4x + a_6
+\end{equation}
+together with $\infty$.  For an extension $L \supseteq k$, the points on $E_k$ with coordinates in 
+$L$ will be denoted by $E_k(L)$, i.e. 
+$$
+E_k(L) = \{ \infty \} \cup \{ (x, y) \in \vmathbb{A}_L^2 \mid y^2 + a_1xy + a_3y = x^3 + a_2x^2 + 
+a_4x + a_6\}
+$$
+Equation (\ref{equation:AEC}) is called the generalized Weierstrass equation of $E_k$. If the 
+characteristic of $k$ is not $2$ then, applying the change variables $y \mapsto y - a_1x / 2 - a_3 / 
+2$, \refequation{equation:AEC} can be rewritten as
+\begin{equation}
+\label{equation:AEC2}
+\quad y^2 = x^3 + \frac{b_2}{4}x^2 + \frac{b_4}{2}x + \frac{b_6}{4}
+\end{equation}
+where  $b_2 = a_1^2 + 4a_2,\: b_4 = a_1a_3 + 2a_4,\: b_6 = a_3^2 + 4a_6$. Let us also define $b_8 = 
+a_1^2a_6 + 4a_2a_6 - a_1a_3a_4 + a_2a_3^2 - a_4^2$ for future references. If the characteristic is 
+also not $3$ then the change of variables $x \mapsto x - b_2 / 7$ results in
+\begin{equation}
+\label{equation:AEC3}
+\quad y^2 = x^3 + Ax + B
+\end{equation}
+for some constants $A, B \in k$. Equation (\ref{equation:AEC3}) is called the Weierstrass equation 
+of $E_k$. We shall simply use $E$ instead of $E_k$ when $k$ is uniquely known from the context. 
+Unless otherwise specified, by an elliptic curve $E$ we shall mean an elliptic curve defined by 
+\refequation{equation:AEC3}. Since $E$ is nonsingular, the cubic $x^3 + Ax + B$ cannot have repeated 
+roots and hence $\Delta = -4A^3 - 27B^2 \ne 0$ where $\Delta$ is the discriminant of the cubic. So, 
+we always have $4A^3 + 27B^2 \ne 0$. Let $P = (x_P, y_P)$ and $Q = (x_Q, y_Q)$ be two points on $E$. 
+Define the addition $R = (x_R, y_R) = P + Q$ as follows. For any point $P$, $P + \infty = P$, so for 
+example $\infty + \infty = \infty$. For $P, Q \ne \infty$:
+\begin{enumerate}
+\item If $x_P \ne x_Q$ then $x_R = \left( \frac{y_Q - y_P}{x_Q - x_P} \right)^2 - x_P - x_Q$ and 
+$y_R = \frac{y_Q - y_P}{x_Q - x_P}(x_P - x_R) - y_P$.
+\label{item:glaw-dist}
+\item If $x_P = x_Q$ but $y_P \ne y_Q$ then $P + Q = \infty$.
+\item If $P = Q$ and $y_P \ne 0$ then $x_R = \left( \frac{3x_P^2 + A}{2y_P} \right)^2 - 2x_P$ and 
+$y_R = \frac{3x_P^2 + A}{2y_P}(x_P - x_R) - y_P$.
+\item If $P = Q$ and $y_P = 0$ then $P + Q = \infty$.
+\end{enumerate}
+It is not hard to prove that under the above addition, the points on $E$ form an abelian group with 
+$\infty$ as identity (e.g. \cite[Sec. 2.4]{Washington2008} or \cite[Sec. 2.11]{Enge1999}). From rule 
+2 and 4, and \refequation{equation:AEC3} we have $-P = (x_P, -y_P)$. Figure \ref{figure:elli-glaw} 
+illustrates the geometrical view of the group law for the curve $y^2 = x^3 + x^2 - 2x$ over the real 
+field $\vmathbb{R}$ when $x_P \ne x_Q$, i.e. Case \ref{item:glaw-dist} of the above. The two ends of 
+the $y$-axis are labelled with $\infty$ to show that they meet at infinity.
+
+\begin{figure}[ht]
+\setlength{\abovecaptionskip}{-0.5cm}
+%\setlength{\belowcaptionskip}{0cm}
+\begin{center}
+\begin{tikzpicture}[scale=0.85]
+%\draw[very thin, color=gray] (-3.9, -3.9) grid (5.9, 3.9);
+\draw[->] (-4, 0)--(6, 0) node[right] {$x$};
+\draw[->] (0, -4) node[below] {$\infty$} --(0, 4) node[right] {$y$} node[above] {$\infty$};
+\draw[color=blue, samples=100, smooth, domain=-2:0] plot (\x, {0.75 * sqrt(\x*(\x + 2)*(\x - 1))});
+\draw[color=blue, samples=100, smooth, domain=-2:0] plot (\x, {-0.75 * sqrt(\x*(\x + 2)*(\x - 1))});
+\draw[color=blue, samples=100, smooth, domain=1:3] plot (\x, {0.75 * sqrt(\x*(\x + 2)*(\x - 1))});
+\draw[color=blue, samples=100, smooth, domain=1:3] plot (\x, {-0.75 * sqrt(\x*(\x + 2)*(\x - 1))}) 
+node[right] {$y^2 = x^3 + x^2 - 2x$};
+\draw[color=red, samples=100, smooth, domain=-3:4] plot (\x, {0.49*(\x+0.7)+0.93});
+%----------------------------------------
+\coordinate[label=above:$P$] (P) at (-0.7, 0.93);
+\coordinate[label=above left:$Q$] (Q) at (-1.97, 0.31);
+\coordinate[label=above left:$R'$] (R) at (2.1, 2.31);
+\coordinate[label=left:$R$] (S) at (2.1, -2.31);
+%----------------------------------------
+\fill [red] (P) circle (1.3pt);
+\fill [red] (Q) circle (1.3pt);
+\fill [red] (R) circle (1.3pt);
+\fill [red] (S) circle (1.3pt);
+%----------------------------------------
+\draw[color=orange, densely dashed] (2.1, 2.25)--(2.1, -2.25);  
+\end{tikzpicture}
+\end{center}
+\caption{$P + Q = R$}
+\label{figure:elli-glaw}
+\end{figure}
+
+
+
+
+
+
+
+\section{Endomorphisms}
+Let $E^1$ and $E^2$ be elliptic curves defined over the field $k$ and let $\overline{k}$ be the 
+algebraic closure of $k$. An \textbf{isogeny} from $E^1$ to $E^2$ is a group homomorphism
+$$
+\setlength\arraycolsep{2pt}
+\begin{array}{llll}
+\sigma: & E^1(\overline{k}) & \longrightarrow & E^2(\overline{k}) \\
+& (x, y) & \longmapsto & (f(x, y), g(x, y))
+\end{array}
+$$
+where $f, g \in \overline{k}(x, y)$ are rational functions. Replacing $y^2$ by $x^3 + Ax + B$ in 
+$f(x, y)$ we can write $f(x, y) = (a(x) + yb(x)) / (c(x) + yd(x))$ where $a, b, c, d$ are 
+polynomials. Removing $y$ from the denominator by multiplying $c(x) - yd(x)$ on both denominator and 
+numerator, and using the fact that $(f(x, -y), g(x, -y)) = \sigma(x, -y) = \sigma(-(x, y)) = (f(x, 
+y), -g(x, y))$ we have $f(x, y) = r(x)$ where $r(x)$ is a rational function in $x$. By a similar 
+process $g(x, y) = ys(x)$ for some rational function $s(x)$. So, we can always write $\sigma(x, y) = 
+(r(x), ys(x))$ for some rational functions $r$ and $s$.
+
+Let $r(x) = r_1(x) / r_2(x)$ where $\gcd(r_1(x), r_2(x)) = 1$. The degree of $\sigma$ is defined to 
+be $\max\{ \deg r_1(x), \deg r_2(x)\}$ when $\sigma$ is nontrivial. If $\sigma = 0$ then $\deg 
+\sigma = 0$. A nontrivial isogeny $\sigma$ is \textbf{separable} if the derivative $r'(x)$ is not 
+the zero function.
+\begin{lemma}
+Every nontrivial isogeny $\sigma: E^1(\overline{k}) \rightarrow E^2(\overline{k})$ of elliptic 
+curves is surjective.
+\end{lemma}
+\begin{proof}
+See \cite{Washington2008} for an elementary proof, and \cite{Fulton2008} for a proof for general 
+projective curves.
+\end{proof}
+By the kernel of an isogeny $\sigma$ we mean its kernel as a group homomorphism.
+\begin{proposition}
+\label{proposition:iso-ker}
+For any nontrivial isogeny $\sigma$, $\#\ker(\sigma) \le \deg(\sigma)$ with equality if $\sigma$ is 
+separable. 
+\end{proposition}
+\begin{proof}
+See \cite[Sec. 3.4]{Silverman2009} or \cite{Washington2008}.
+\end{proof}
+An \textbf{endomorphism} of elliptic curve $E$ is an isogeny $\varphi: E(\overline{k}) \rightarrow 
+E(\overline{k})$. The set of all endomorphisms of $E$ is denoted by $\ringofend(E)$. For every two 
+endomorphisms $\alpha, \beta \in \ringofend(E)$ define $(\alpha + \beta)(P) = \alpha(P) + \beta(P)$, 
+and $(\alpha\beta)(P) = \alpha(\beta(P))$ for $P \in E$. Then it can easily be verified that 
+$\ringofend(E)$ is a ring. Two basic maps on $E$ are
+$$
+\setlength\arraycolsep{2pt}
+\begin{array}{llll}
+\text{id}: & E(\overline{k}) & \rightarrow & E(\overline{k}) \\
+& P & \mapsto & P
+\end{array}
+\qquad
+\text{ and }
+\qquad
+\begin{array}{llll}
+[n]: & E(\overline{k}) & \rightarrow & E(\overline{k}) \\
+& P & \mapsto & [n]P = P + P + \cdots + P \quad (n \text{ times})
+\end{array}
+$$
+The first one is clearly an endomorphism. Using the addition laws and a simple induction shows that 
+the map $[n]$ is also an endomorphism. This means that $\ringofend(E)$ always contains a copy of the 
+integer ring $\vmathbb{Z}$. We will show that $[n]$ is separable if and only if $n$ is relatively 
+prime to $\fieldchar(k)$. To this end, let first prove the following result.
+\begin{lemma}
+\label{lemma:mult-by-n-diff}
+Let $\varphi_1, \varphi_2 \in \ringofend(E)$ such that $\varphi_i(x, y) = (r_i(x), ys_i(x))$, $i = 
+1, 2$ where $r_i, s_i$ are rational functions. Let $\varphi(x, y) = (r(x), ys(x))$ such that 
+$\varphi = \varphi_1 + \varphi_2$. If $r_i'(x) / s_i(x) = c_i$ for some constants $c_i, \: i = 1, 2$ 
+then $r'(x) / s(x) = c_1 + c_2$.
+\end{lemma}
+\begin{proof}
+Let $\tau_Q(x, y) = (f, g)$ be the translation-by-$Q$ map on $E$. Then it is straightforward, but 
+lengthy, to show that $\frac{\partial f}{\partial x} + \frac{dy}{dx}\frac{\partial f}{\partial y} = 
+\frac{g}{y}$. Let $\varphi(x, y) = (x_3, y_3)$, and let $\varphi_i(x, y) = (x_i, y_i)$, $i = 1, 2$. 
+If we let $Q = (x_1, y_1)$ then $\frac{\partial x_3}{\partial x_2} + \frac{dy_2}{dx_2}\frac{\partial 
+x_3}{\partial y_2} = \frac{y_3}{y_2}$, and if $Q = (x_2, y_2)$ then $\frac{\partial x_3}{\partial 
+x_1} + \frac{dy_1}{dx_1}\frac{\partial x_3}{\partial y_1} = \frac{y_3}{y_1}$. Therefore
+\begin{align*}
+r'(x) 
+&= \frac{dx_3}{dx} = \frac{dx_1}{dx}\frac{\partial x_3}{\partial x_1} + 
+\frac{dx_2}{dx}\frac{\partial x_3}{\partial x_2} + \frac{dx_1}{dx}\frac{dy_1}{dx_1}\frac{\partial 
+x_3}{\partial y_1} + \frac{dx_2}{dx}\frac{dy_2}{dx_2}\frac{\partial x_3}{\partial y_2} \\
+&= \frac{dx_1}{dx}\frac{y_3}{y_1} + \frac{dx_2}{dx}\frac{y_3}{y_2} = c_1\frac{y_3}{y} + 
+c_2\frac{y_3}{y} = (c_1 + c_2)s(x)
+\end{align*}
+as desired.
+\end{proof}
+\begin{corollary}
+\label{corollary:mult-by-n}
+Let $P = (x, y)$ be a point on $E$, and let $[n]P = (r(x), ys(x))$ for some rational functions $r, 
+s$. Then $r'(x) / s(x) = n$. Therefore, the mapping $[n]$ is separable if and only if $\gcd(n, 
+\fieldchar(k)) = 1$.
+\end{corollary}
+\begin{proof}
+The statement is clear for $n = 1$. Assume it is true for all $k < n$. Let $[n - 1]P = (r_1(x), 
+ys_1(x))$. Then $r_1'(x) / s_1(x) = n - 1$. We have $(r(x), ys(x)) = [n]P = [n - 1]P + P = (r_1(x), 
+ys_1(x)) + (x, y)$, so by \reflemma{lemma:mult-by-n-diff}, $r'(x) / s(x) = n - 1 + 1 = n$.
+\end{proof}
+We will give explicit formulae for the endomorphism $[n]$ in \refsection{section:div-poly}. In the 
+theory of elliptic curves over finite fields, i.e. $k = \vmathbb{F}_q$, the following map plays an 
+important role.
+\begin{equation}
+\label{equation:Frobenius}
+\setlength\arraycolsep{2pt}
+\begin{array}{llll}
+\phi_q: & E(\overline{\vmathbb{F}_q}) & \rightarrow & E(\overline{\vmathbb{F}_q}) \\
+& (x, y) & \mapsto & (x^q, y^q), \: \infty \mapsto \infty
+\end{array}
+\end{equation}
+It is called the Frobenius map. It is, indeed, the curve version of the Frobenius automorphism 
+$\phi_q: \overline{\vmathbb{F}_q} \rightarrow \overline{\vmathbb{F}_q}$. Since $a^q = a$ for every $a 
+\in \vmathbb{F}_q$, the field $\vmathbb{F}_q$ is characterized by $\phi_q$. Thus, applying $\phi_q$ to 
+the equation of $E$, it is clear that $\phi_q(x, y) \in E(\overline{\vmathbb{F}_q})$. We also have $P 
+\in E(\vmathbb{F}_q)$ if and only if $\phi_q(P) = P$. By the group laws defined in 
+\refsection{section:W-grouplaw}, it can be easily seen that $\phi$ is an endomorphism of $E$. Also 
+it is clear that $\phi_q$ is not separable. In fact we have
+\begin{corollary}
+\label{corollary:Frob-sep}
+Let $E$ be an elliptic curve defined over $\vmathbb{F}_q$. For integers $a$ and $b$, not both zero, 
+and the Frobenius endomorphism $\phi_q$, the endomorphism $a\phi_q + b$ is separable if and only if 
+$\gcd(b, q) = 1$.
+\end{corollary}
+\begin{proof}
+\reflemma{lemma:mult-by-n-diff} and \refcorollary{corollary:mult-by-n}.
+\end{proof}
+\begin{proposition}
+\label{proposition:Frob-ker-E}
+Let $E$ be an elliptic curve defined over $\vmathbb{F}_q$, and $\phi_q$ the Frobenius endomorphism. 
+Then 1. $\#E(\vmathbb{F}_{q^n}) = \deg(\phi_q^n - 1)$, and 2. $\ker(\phi_q^n - 1) = 
+E(\vmathbb{F}_{q^n})$
+\end{proposition}
+\begin{proof}
+The map $\phi_q^n$ is equivalent to the Frobenius map on $E(\overline{\vmathbb{F}_{q^n}})$. So, 
+$(\phi_q^n - 1)(P) = 0$ if and only if $P \in E(\vmathbb{F}_{q^n})$ which proves 2. By 
+\refcorollary{corollary:Frob-sep}, $(\phi_q^n - 1)$ is separable hence $\#E(\vmathbb{F}_{q^n}) = 
+\#ker(\phi_q^n - 1) = \deg(\phi_q^n - 1)$ by \refproposition{proposition:iso-ker}. This proves 1.
+\end{proof}
+
+
+
+
+
+
+
+
+
+\section{Division polynomials}
+\label{section:div-poly}
+
+For a positive integer $n$ and a point $P$ on an elliptic curve $E$, $[n]P$ can be computed using 
+the repeated squaring algorithm. Another way of computing $[n]P$ is using explicit formulae 
+expressed by division polynomials. The division polynomials for an elliptic curve defined by 
+\refequation{equation:AEC} are defined recursively as follows.
+\begin{align*}
+& \psi_0 = 0 \\
+& \psi_1 = 1 \\
+& \psi_2 = 2y + a_1x + a_3 \\
+& \psi_3 = 3x^4 + b_2x^3 + 3b_4x^2 + 3b_6x + b_8 \\
+& \psi_4 = \psi_2 \cdot (2x^6 + b_2x^5 + 5b_4x^4 + 10b_6x^3 + 10b_8x^2 + (b_2b_8 - b_4b_6)x + 
+(b_4b_8 - b_6^2)) \\
+& \psi_{2m + 1} = \psi_{m + 2}\psi_m^3 - \psi_{m - 1}\psi_{m + 1}^3 & \text{ for } m \ge 2\\
+& \psi_{2m} = \psi_2^{-1}\psi_m(\psi_{m - 1}^2\psi_{m + 2} - \psi_{m - 2}\psi_{m + 1}^2) & \text{ 
+for } m \ge 2
+\end{align*}
+where $b_2, b_4, b_6$, and $b_8$ are the values defined in \refequation{equation:AEC2}. Also define
+\begin{align*}
+\phi_m &= x\psi_m^2 - \psi_{m - 1}\psi_{m + 1} \\
+\omega_m &= (2\psi_m)^{-1}(\psi_{2m} - (a_1\phi_m + a_3\psi_m^2)\psi_m^2)
+\end{align*}
+where $\omega_m$ is defined when the field $k$ is not of characteristic $2$. In the following let $R 
+= \vmathbb{Z}[a_1, \dots, a_6, x, \psi_2^2]$.
+\begin{lemma}
+\label{lemma:divpoly-in-R}
+If $m$ is odd then $\psi_m \in R$. If $m$ is even then $(\psi_2)^{-1}\psi_m \in R$.
+\end{lemma}
+\begin{proof}
+The lemma is clear for $m \le 4$. Assume it is true for $\vmathbb{N}_{< k}$. If $k$ is odd, say $k = 
+2\ell + 1$, then $\psi_k = \psi_{\ell + 2}\psi_\ell^3 - \psi_{\ell - 1}\psi_{\ell + 1}^3$. If $\ell$ 
+is odd then $\psi_{\ell - 1}\psi_{\ell + 1}^3 \in \psi_2^4R \subseteq R$ hence $\psi_k \in R$. If 
+$\ell$ is even then $\psi_{\ell + 2}\psi_\ell^3 \in \psi_2^4R \subseteq R$ hence $\psi_k \in R$. If 
+$k$ is even, say $k = 2\ell$, then $\psi_k = \psi_2^{-1}\psi_\ell(\psi_{\ell - 1}^2\psi_{\ell + 2} - 
+\psi_{\ell - 2}\psi_{\ell + 1}^2)$. If $\ell$ is odd then $\psi_{\ell - 1}^2, \psi_{\ell + 1}^2 \in 
+\psi_2^2R$ hence $\psi_k \in \psi_2^{-1}(\psi_2^2R) = \psi_2R$. If $\ell$ is even then $\psi_\ell, 
+\psi_{\ell + 2}, \psi_{\ell - 2} \in \psi_2R$ hence $\psi_k \in \psi_2^{-1}(\psi_2^2R) = \psi_2R$.
+\end{proof}
+A direct consequence of \reflemma{lemma:divpoly-in-R} is that $\psi_m^2, \phi_m \in R$ for all $m$. 
+From \refequation{equation:AEC2} we have $\psi_2^2 = (2y + a_1x + a_3)^2 = 4(y^2 + a_1xy + a_3y) + 
+(a_1x + a_3)^2 = 4(x^3 + a_2x^2 + a_4x + a_6) + (a_1x + a_3)^2 \in \vmathbb{Z}[a_1, \dots, a_6, x]$ 
+hence $R = \vmathbb{Z}[a_1, \dots, a_6, x]$. Therefore, $\psi_m^2$ and $\phi_m$ are polynomials in 
+$x$ over the ring $\vmathbb{Z}[a_1, \dots, a_6]$ for all $m$. For a polynomial $f$ over an arbitrary 
+polynomial ring $A[x, y]$, let $\Lambda(f)$ denote the leading term of $f$ as a polynomial of $x$.
+\begin{lemma}
+\label{lemma:psi-lead}
+$$
+\Lambda(\psi_m) = 
+\begin{cases}
+mx^{(m^2 - 1) / 2} & \text{ if } m \text{ is odd} \\ 
+\frac{m}{2}\psi_2x^{(m^2 - 4) / 2} & \text{ if } m \text{ is even}
+\end{cases}
+$$
+\end{lemma}
+\begin{proof}
+We will proceed by induction on $m$. The lemma is true for $m \le 4$. Let $m = 2\ell + 1$ with 
+$\ell$ even. Since $\Lambda(\psi_2^2) = 4x^3$ and $(\ell + 2)\ell^3 \ne (\ell - 1)(\ell + 1)^3$, we 
+have $\Lambda(\psi_{\ell + 2}\psi_\ell^3) \ne \Lambda(\psi_{\ell - 1}\psi_{\ell + 1}^3)$. Thus
+\begin{align*}
+\Lambda(\psi_m) 
+&= \Lambda(\psi_{\ell + 2}\psi_\ell^3 - \psi_{\ell - 1}\psi_{\ell + 1}^3) \\
+&= \Lambda(\Lambda(\psi_{\ell + 2}\psi_\ell^3) - \Lambda(\psi_{\ell - 1}\psi_{\ell + 1}^3)) \\
+&= \Lambda\left(\frac{\ell + 2}{2}x^{(\ell^2 + 4\ell) / 2}\frac{\ell^3}{8}x^{3(\ell^2 - 4) / 
+2}(16x^6) - (\ell - 1)x^{(\ell^2 - 2\ell) / 2}(\ell + 1)^3x^{3(\ell^2 + 2\ell) / 2}\right) \\
+&= ((\ell + 2)\ell^3x^{(4\ell^2 + 4\ell) / 2} - (\ell - 1)(\ell + 1)^3x^{(4\ell^2 + 4\ell) / 2}) \\
+&= (2\ell + 1)x^{(4\ell^2 + 4\ell) / 2} = mx^{(m^2 - 1) / 2}
+\end{align*} 
+as desired. The other cases of $m$ can be verified similarly.
+\end{proof}
+\begin{corollary}
+$\Lambda(\psi_m^2) = m^2x^{m^2 - 1}$, and $\Lambda(\phi_m) = x^{m^2}$.
+\end{corollary}
+\begin{proof}
+The first identity is trivial from \reflemma{lemma:psi-lead}. For the second identity assume $m$ is 
+odd. Then $\Lambda(x\psi_m^2) \ne \Lambda(\psi_{m - 1}\psi_{m + 1})$. Thus
+\begin{align*}
+\Lambda(\phi_m) 
+&= \Lambda(\Lambda(x\psi_m^2) - \Lambda(\psi_{m - 1}\psi_{m + 1})) \\
+&= \Lambda(m^2x^{m^2} - \frac{m - 1}{2}x^{(m^2 - 2m - 3) / 2}\frac{m + 1}{2}x^{(m^2 + 2m - 3) / 
+2}(4x^3)) \\
+&= m^2x^{m^2} - (m^2 - 1)x^{m^2} = x^{m^2}
+\end{align*}
+The case of even $m$ is treated similarly.
+\end{proof}
+It can be shown that polynomials $\psi_m^2$ and $\phi_m$ are coprime \cite[Sec. 1.3]{Schmitt2003}. 
+Let $P = (x, y)$ be a point on the elliptic curve $E$ defined by the generalized Weierstrass 
+equation, (\ref{equation:AEC}), over a field $k$ with $\fieldchar(k) \ne 2$. Then for any integer $n 
+\in \vmathbb{N}$
+\begin{equation}
+\label{equation:mult-by-n}
+[n]P = \left( \frac{\phi_n(P)}{\psi_n^2(P)}, \frac{\omega_n(P)}{\psi_n^3(P)}\right)
+\end{equation}
+This is usually proved by a complex analytic approach using the Weierstrass $\wp$ function, see for 
+example \cite{Lang1978}. One of the important properties of the division polynomials implied from 
+\refequation{equation:mult-by-n} is that if $n$ is relatively prime to $\fieldchar(k)$ then $[n]P = 
+\infty$ if and only if $\psi_n(x, y) = 0$; For if $\psi_n(x, y) \ne 0$ then $\phi_n(P) / 
+\psi_n^2(P), \omega_n(P) / \psi_n^3(P) \in k$ hence $[n]P \ne \infty$. Conversely, if $[n]P \ne 
+\infty$ then $\psi_n(x, y) \ne 0$, since $\phi_n(P) / \psi_n^2(P) \in k$ is defined and 
+$\gcd(\psi_n^2, \phi_n) = 1$.
+
+For an elliptic curve $E$ defined over a field $k$, and a positive integer $n$, define the 
+$n$-torsion subgroup of $E$ to be
+$$
+E[n] = \{ P \in E(\overline{k}) \mid [n]P = \infty\}
+$$
+which is the kernel of the endomorphism $[n]: E(\overline{k}) \rightarrow E(\overline{k})$. From 
+\refequation{equation:mult-by-n}, the degree of $[n]$ is $n^2$, and by 
+\refcorollary{corollary:mult-by-n}, $[n]$ is separable if and only if $\fieldchar(k) \nmid n$. So, 
+$\#E[n] < n^2$ if  $\fieldchar(k) \mid n$, and $\#E[n] = n^2$ if  $\fieldchar(k) \nmid n$ by 
+\refproposition{proposition:iso-ker}. For the field $k$ of characteristic $p > 0$, $E$ is called 
+\textbf{ordinary} if $E[p] \cong \vmathbb{Z}_p$, and \textbf{supersingular} if $E[p] \cong 0$. The 
+structure of $E[n]$ for an arbitrary $n$ is determined by the following.
+\begin{theorem}
+\label{theorem:n-torsion-struct}
+Let $E$ be an elliptic curve over a field $K$ with $\fieldchar(K) = p$, and let $n$ be a positive 
+integer. Let $m = 1$ if $p = 0$. Otherwise, let $m = p^r$ where $r$ is the largest integer such that 
+$p^r \mid n$. Then
+$$
+E[n] = \vmathbb{Z}_m^{\delta} \oplus \vmathbb{Z}_{n / m} \oplus \vmathbb{Z}_{n / m}
+$$
+where $\delta = 0$ if the curve is supersingular, and $\delta = 1$ if it is ordinary.
+\end{theorem}
+\begin{proof}
+Let $t$ be a prime divisor of $n$. Then we consider two cases for $t$: \\
+Case 1: $t = p$. We have $\#E[p] < p^2$ hence $E[p] \cong 0 \text{ or } \vmathbb{Z}_p$. If $E[p] 
+\cong 0$ then $E[p^k] \cong 0$ for all $k$. So let $E[p] \cong \vmathbb{Z}_p$. Since the endomorphism 
+$[p]$ is surjective, there are points of order $p^j$ for all $j$. Therefore $E[p^k]$ is cyclic of 
+order $p^k$ hence $E[p^k] \cong \vmathbb{Z}_{p^k}$. \\
+Case 2: $t \ne p$. We have $\#E[t^k] = t^{2k}$ so that $E[t^k]$ is a finite abelian $t$-group. Every 
+finite abelian $t$-group can be expressed as a direct product of cyclic groups, hence $E[t^k] \cong 
+\bigoplus_{i = 1}^\ell \vmathbb{Z}_{t^{\beta_i}}$ where $\beta_i \ge 1$. Thus, $E[t^k]$ contains 
+$t^\ell - 1$ elements of order $t$ which implies that $E[t] \subseteq E[t^k]$ is of order $t^\ell$ 
+hence $\ell = 2$. Therefore, $E[t^k] \cong \vmathbb{Z}_{t^{\beta_1}} \oplus \vmathbb{Z}_{t^{\beta_2}}$ 
+with $\beta_1 + \beta_2 = 2k$. Since $E[t^k]$ is not cyclic, we have $\beta_i \le k$ and hence 
+$\beta_i = k$, $i = 1, 2$. \\
+Now, assume first that $p \ne 0$. Let $n = p^\alpha p_1^{\alpha_1} \cdots p_k^{\alpha_k}$ be the 
+prime factorization of $n$ in which $\alpha \ge 0$ and $\alpha_i > 0$ for $i = 1, \dots, k$, and let 
+$m = p^\alpha$. Then by case 1 and 2
+\begin{align*}
+E[n] 
+&= E[p^\alpha] \oplus \left( \bigoplus_{i = 1}^k E[p_i^{\alpha_i}] \right) = E[p^\alpha] \oplus 
+\left( \bigoplus_{i = 1}^k \vmathbb{Z}_{p_i^{\alpha^i}} \oplus \vmathbb{Z}_{p_i^{\alpha^i}} \right) \\
+&= E[p^\alpha] \oplus \left( \bigoplus_{i = 1}^k  \vmathbb{Z}_{p_i^{\alpha^i}} \right) \oplus \left( 
+\bigoplus_{i = 1}^k  \vmathbb{Z}_{p_i^{\alpha^i}} \right) = E[p^\alpha] \oplus \vmathbb{Z}_{n / m} 
+\oplus \vmathbb{Z}_{n / m} \\
+&= \vmathbb{Z}_m^{\delta} \oplus \vmathbb{Z}_{n / m} \oplus \vmathbb{Z}_{n / m}
+\end{align*}
+If $p = 0$ then assume $n = p_1^{\alpha_1} \cdots p_k^{\alpha_k}$ is the prime factorization of $n$, 
+and let $m = 1$. Then the same process results in $E[n] = \vmathbb{Z}_{n} \oplus \vmathbb{Z}_{n} = 
+\vmathbb{Z}_{n / m} \oplus \vmathbb{Z}_{n / m}$ which completes the proof.
+\end{proof}

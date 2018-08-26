@@ -1,0 +1,128 @@
+
+\chapter{Introduction}
+\label{chapter:intro}
+
+\lettrine[findent=-0.5em, loversize=0.1]{A}{} one way function is, roughly speaking, a function that 
+is easy to compute and hard to invert. The theory of one way functions forms the foundations of the 
+modern cryptography \cite{Levin2003, Katz2008}. Given a certain finite cyclic group $G$, and a 
+generator $g$ of $G$, the function
+$$
+\setlength\arraycolsep{2pt}
+\begin{array}{llll}
+\varphi: & \vmathbb{N}_{\le \abs{G}} & \longrightarrow & G \\
+ & x & \longmapsto & g^x
+\end{array}
+$$
+is expected to be a one way function. The problem of computing $\varphi^{-1}$ is called the 
+\emph{discrete logarithm problem} (DLP) to the base $g$ in $G$. The security of many cryptographic 
+schemes is based on DLP \cite{KoblitzMen2004, Odlyzko2000}. The group $G$ is suitable for this 
+purpose if the DLP is hard in $G$, the elements of $G$ are easily and efficiently representable, 
+computation in $G$ is fast, and the order of $G$ can be computed efficiently. As a general 
+assumption, it is always assumed that $G$ has a non-smooth order, i.e. its order is a prime or a 
+product of a large prime and some other very small factors; otherwise it is vulnerable to the 
+Pohlig-Hellman attack \cite{Pohlig1978}. 
+
+The traditional candidates for the group $G$ are multiplicative subgroups of finite fields. The 
+arithmetic on finite fields is fast, but on the other hand, there are subexponential algorithms for 
+computing discrete logarithm in these fields \cite{MenOorVan96}. Another candidate for the group 
+$G$, proposed by Koblitz \cite{Koblitz1987} and Miller \cite{Miller1985} independently in 1985, is a 
+cyclic subgroup of the group of points of an elliptic curve over a finite field. The advantage of 
+systems based on such groups is that there is no known subexponential algorithm for DLP in these 
+groups, for example the index-calculus algorithm does not apply to elliptic curves except to those 
+of very special structures \cite{SilvermanSuz1998, Miller1985}. This leads to equally secure systems 
+with smaller parameter sizes. The primary disadvantage of elliptic curve systems is that the 
+addition of points is a relatively costly operation which is now reasonably fast due to the advances 
+made in both theory and implementations, e.g. see \cite{Hankerson2004} and the references therein. 
+Furthermore, Koblitz \cite{Koblitz1991, KoblitzDS1998} proposed a special family of curves allowing 
+fast arithmetic. Computing the order of the group of a given elliptic curve is called point 
+counting. There are polynomial time algorithms for counting points on elliptic curves, e.g. 
+\cite{Schoof1985}. 
+
+% references for Koblitz curves
+
+As another candidate for group $G$ suitable for cryptosystems, Koblitz \cite{Koblitz1989} proposed 
+the jacobian variety of a hyperelliptic curve over a finite field, which is indeed a generalization 
+of the elliptic case. This leads to even smaller field sizes, and larger number of choices. Also, 
+the elements of the jacobian can be represented using pairs of finite degree polynomials called the 
+Mumford representation. According to Riemman-Roch theorem, there is a unique integer attached to 
+every curve, called the genus of the curve. For example, a curve is elliptic if and only if it is 
+genus one with at least one rational point. The main drawback of the hyperelliptic curve systems is 
+that the addition on the jacobian is generally slower than the group operation on elliptic curves, 
+and the higher the genus goes the slower would be the arithmetic. Moreover, for large enough genera, 
+there is a version of index-calculus method for computing the discrete logarithm in the jacobian 
+\cite{Adleman1994, Enge2002, Muller1999, GaudryDL2000}. 
+
+In terms of efficiency, genus 2 curves provide the closest hyperelliptic alternative for elliptic 
+curve cryptosystems \cite{Pelzl2003, Gaudry2007, TLange2005}. Furthermore, for an equally secure 
+system, and the same parameter lengths, the base field for the genus 2 curve is almost twice 
+smaller. To find secure hyperelliptic curves, there are two main approaches:
+\begin{description}
+\item[Point counting] In which one tries several random curves over a given finite field until a 
+good one is found, and then computes the cardinality of the jacobian.
+\item[CM method] In which, instead of trying random curves, one starts with the endomorphism ring 
+and vary the base field until a curve with a good jacobian order is found, e.g. \cite[ch. 
+18]{Cohen2006}, and \cite{Weng2003}. 
+\end{description}
+There are other methods, e.g. \cite{Sutherland2009}, that work under special conditions. There are 
+also known special families of curves with good jacobian order, e.g. \cite{Koblitz1988a}. The 
+complex multiplication method is efficient, but curves found by this method have more special 
+structures, and it is not generally known if they are stronger or weaker than general curves. In 
+this thesis, we investigate point counting on genus 2 curves.
+
+Various approaches have been proposed for point counting on hyperelliptic curves, from which we can 
+name (\textbf{\romnum{1}}) Schoof's algorithm which is the generalization of the Schoof's algorithm 
+for elliptic curves, and it is polynomial time. (\textbf{\romnum{2}}) Kedlaya's algorithm 
+\cite{Kedlaya2001} which is exponential time in general, but efficient in small characteristics. 
+(\textbf{\romnum{3}}) Satoh's algorithm \cite{Satoh2000} which is polynomial time in small 
+characteristic, but exponential in general. The best of the above approaches, for large 
+characteristics, is the Schoof's algorithm. The generalization is essentially due to Pila 
+\cite{Pila1990}. The Schoof's algorithm for hyperelliptic curves of genus 2 was then presented in 
+Gaudry and Harley \cite{GauHar2000}, and Gaudry and Schost \cite{GauSch2004, GASC2010}. In 
+particular, the following is the timeline for point counting on genus $2$ curves.
+\begin{itemize}
+\item Gaudry and Harley (2000): 126 bit Jacobian
+\item Gaudry and Schost (2004): 164 bit, secure Jacobian
+\item Sutherland (2007): 188 bit, secure Jacobian (works for special curves)
+\item Gaudry and Schost (2008): 256 bit, secure Jacobian
+\item Gaudry and Schost (present): 256 bit, doubly-secure Jacobian
+\end{itemize}
+In this thesis, we show how to improve the work of Gaudry and Schost by improving the arithmetical 
+ingredients of their algorithm both theoretically and in terms of implementation. According to their 
+most recent work, their algorithm makes extensive use of square (or higher) root computing, modular 
+polynomial composition, and power projection. Both modular polynomial composition, and power 
+projection are based on  matrix multiplication. For example, to have a fast modular polynomial 
+composition, the natural choice is the algorithm of Brent and Kung \cite{BreKun1978}, which is still 
+practically the best. So, we have  proposed and implemented an algorithm for fast multiplication of 
+matrices with integer entries of arbitrary length. This small parallel low level library, with high 
+level interfaces, is embedded into the NTL library \cite{NTL2009}. Consequently, the new modular 
+composition, and power projection implementations have been embedded into NTL. For the square root 
+computation, we have proposed a new algorithm, implemented it, and integrated it into NTL. This 
+algorithm uses polynomial composition for computing a trace-like map that reduces the problem to the 
+same problem over the prime field.
+
+In this thesis, rather than an abstract general description of materials, specially the theory of 
+elliptic and hyperelliptic curves, we have tried to conduct a concrete and intuitive approach. We 
+have made an effort to make this document as self contained as possible with respect to the needed 
+materials by giving clean proofs, unless the proofs are too long or there is no point in quoting 
+other's proofs. The reader is assumed to have a basic knowledge of algebra, and polynomial 
+arithmetic. We shall denote the asymptotic complexity bounds of polynomial multiplication, and 
+modular polynomial composition by $O(M(n))$, and $O(C(n))$ respectively. The best known $M(n)$ is 
+$n\log n\log\log n$ achieved by using Fast Fourier Transform (FFT) \cite{Schonhage1971}, and the 
+best know $C(n)$ is $n^{1.69}$. See \refsection{section:MMapll} for more details on $C(n)$.
+
+A brief summary of the thesis follows. 
+
+To make the introduction of hyperelliptic curves, specially the Schoof's algorithm, smooth, and for 
+the sake of completeness, Chapters \ref{chapter:ellibase} and \ref{chapter:elli-pointcount} are 
+dedicated to elliptic curves. A short introduction to the theory of elliptic curves over general 
+fields, including the group law, endomorphisms, division polynomials, and torsion subgroups is given 
+in \refchapter{chapter:ellibase}. \refchapter{chapter:elli-pointcount} includes more specific 
+properties of elliptic curves over finite fields, and it is concluded with some point counting 
+methods on elliptic curves. In \refchapter{chapter:hyperelliptic}, we give an introduction to the 
+theory hyperelliptic curves of general genera. \refchapter{chapter:fastMM} consists of the 
+description and implementation of a fast integer matrix multiplication algorithm, and it is 
+concluded with applications of this algorithm to modular polynomial composition, and power 
+projection. In \refchapter{chapter:rootcomp}, we first present various algorithms, including a new 
+one, for computing square roots in finite field, and then extend each of those algorithms to compute 
+$k$-th roots for arbitrary $k \in \vmathbb{N}$. The last chapter consists of a quick review of a 
+genus 2 Schoof algorithm, and some experimental results.

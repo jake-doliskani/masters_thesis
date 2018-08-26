@@ -1,0 +1,175 @@
+\documentclass[11pt]{report}
+
+
+
+\usepackage[margin=1in]{geometry}  
+\usepackage{graphicx}              
+\usepackage{amsmath}               
+\usepackage{amsfonts}              
+\usepackage{amsthm}                
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{enumerate}
+\usepackage{packages/algorithmic}
+\usepackage{url}
+\usepackage{packages/seqsplit}
+\usepackage{packages/lettrine}
+\usepackage{packages/type1cm}
+\usepackage{packages/multirow}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage[libertine]{newtxmath}
+
+
+\urlstyle{same}
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+
+\definecolor{citecolor}{HTML}{009933}
+% to make the refrences clickable, and...
+\hypersetup{
+	unicode = true,
+    colorlinks = true,
+    citecolor = citecolor,
+    filecolor = blue,
+    linkcolor = blue,
+    urlcolor = blue,
+    pdfstartview = {FitH},
+}
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+% theorem envirenments
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{example}[theorem]{Example}
+\newtheorem*{remark}{Remark}
+\newtheorem*{note}{Note}
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\algsetup{linenodelimiter=.}
+\setlength{\parindent}{0pt}
+
+
+\newcommand{\refchapter}[1]{Chapter \ref{#1}}
+\newcommand{\refsection}[1]{Section \ref{#1}}
+\newcommand{\refequation}[1]{Equation (\ref{#1})}
+\newcommand{\reftheorem}[1]{Theorem \ref{#1}}
+\newcommand{\reflemma}[1]{Lemma \ref{#1}}
+\newcommand{\refcorollary}[1]{Corollary \ref{#1}}
+\newcommand{\refproposition}[1]{Proposition \ref{#1}}
+\newcommand{\refalgorithm}[1]{Algorithm \ref{#1}}
+\newcommand{\refstep}[1]{Step \ref{#1}}
+
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+% roman numerals
+\newcommand{\romnum}[1]{\romannumeral #1}
+\newcommand{\Romnum}[1]{\uppercase\expandafter{\romannumeral #1}}
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+% characteristic of a field
+\DeclareMathOperator{\fieldchar}{char}
+% endomorphism ring
+\DeclareMathOperator{\ringofend}{End}
+% trace of a mtrix
+\DeclareMathOperator{\trace}{tr}
+% Galois group
+\DeclareMathOperator{\gal}{Gal}
+% order of an element
+\DeclareMathOperator{\order}{ord}
+% least common multiple
+\DeclareMathOperator{\lcm}{lcm}
+% divisor on a curve
+\DeclareMathOperator{\divisor}{div}
+% support of a divisor
+\DeclareMathOperator{\supp}{supp}
+% abs
+\providecommand{\abs}[1]{\left\vert#1\right\vert}
+
+
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+% The following allows algorithms to split over multiple pages
+\makeatletter
+\newcounter{algorithm}
+\setcounter{algorithm}{0}
+\renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm}}
+\def\algorithm{\@ifnextchar[{\@algorithma}{\@algorithmb}}
+\def\@algorithma[#1]{%
+  \refstepcounter{algorithm}
+  \trivlist
+  \leftmargin\z@
+  \itemindent\z@
+  \labelsep\z@
+  \item[\parbox{\columnwidth}{%
+    \hrule
+    \hrule
+    \noindent\strut\textbf{Algorithm \thealgorithm} #1
+    \hrule
+  }]\hfil\vskip0em%
+}
+\def\@algorithmb{\@algorithma[]}
+\def\endalgorithm{\hfil\vskip-1em\hrule\endtrivlist}
+\makeatother
+
+% defined the end of proof symbol
+\renewcommand{\qedsymbol}{$\square$}
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+% overriding the proof env. for bold font 'Proof'
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep
+        \bfseries
+    #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatletter
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+
+\newcommand{\keywords}[1]{\begin{description} \item[\textbf{Keywords.}] #1 \end{description}}
+
+%//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+\sloppy
+
+\begin{document}
+\pagenumbering{roman}
+\include{titlepage/titlepage}
+%\include{certPage/certPage}
+\include{abstract/abstract}
+\include{contents/contents}
+\pagenumbering{arabic}
+\include{introduction/introduction}
+\include{chapter1/chapter1}
+\include{chapter2/chapter2}
+\include{chapter3/chapter3}
+\include{chapter4/chapter4}
+\include{chapter5/chapter5}
+\include{chapter6/chapter6}
+\include{bibliography/bibliography}
+%\include{vita/vita}
+\end{document}

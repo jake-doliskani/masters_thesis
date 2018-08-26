@@ -1,0 +1,880 @@
+\chapter{Hyperelliptic Curves}
+\label{chapter:hyperelliptic}
+
+By the increasing applications of hyperelliptic curves in various areas of computational computer 
+science, the theory of these curves has been advanced significantly during recent years. They have 
+mainly been used in areas such as public-key cryptography \cite{Koblitz1989, Cohen2006}, primality 
+testing \cite{AdlemanHuang1992}, integer factorization \cite{Lenstra1993, Lenstra2002}, and 
+error-correcting codes \cite{LeBrigand1991}. In this chapter, we give an introduction to the basic 
+theory of hyperelliptic curves. We will discuss rational functions on the curve by following a bit 
+of more general theory to give a clear description of concepts like uniformizers. Then, we will give 
+a brief treatment on divisors, and their basic properties. The Mumford representation, and how to 
+add divisors in the set of divisor classes of degree zero, which is a group called the jacobian of 
+the curve, will be discussed next. At the last section, we summarize some basic facts about 
+hyperelliptic curves over finite fields.
+
+
+
+
+
+
+
+
+
+\section{Basic definitions}
+
+Let $k$ be field and $\overline{k}$ be its algebraic closure, and let $g \ge 2$ be an integer. A 
+hyperelliptic curve of genus $g$ over $k$ is a nonsingular plane curve $\mathcal{H} \subset 
+\vmathbb{A}_{k}^2$ of the form
+\begin{equation}
+\label{equation:hyper-general}
+\mathcal{H}: y^2 + h(x)y = f(x)
+\end{equation}
+together with a point at infinity, where $f(x) \in k[x]$ is monic with $\deg f = 2g + 1$, and $h(x) 
+\in k[x]$ with $\deg h \le g$. Here, nonsingularity means there is no point $P = (x, y) \in 
+\vmathbb{A}_{\overline{k}}^2$ such that $y^2 + h(x)y - f(x) = 2y + h(x) = h'(x)y - f'(x) = 0$. When 
+$g = 1$, \refequation{equation:hyper-general} is the generalized Weierstrass equation of an elliptic 
+curve, see \refsection{section:W-grouplaw}. Therefore, hyperelliptic curves can be thought of as a 
+generalization of elliptic curves. If $\fieldchar(k) > 2$ then the change of variables $y \mapsto y 
+- \frac{1}{2}h(x)$ in (\ref{equation:hyper-general}) gives
+\begin{equation}
+\label{equation:hyper-not2}
+\mathcal{H}: y^2 = f(x)
+\end{equation}
+for some monic polynomial $f(x)$ of degree $2g + 1$. This implies that $\mathcal{H}$ is nonsingular 
+if there is no point $P = (x, y) \in \vmathbb{A}_{\overline{k}}^2$ satisfying $y^2 - f(x) = 2y = 
+f'(x) = 0$ which is simply equivalent to saying that $f(x)$ has no repeated roots. Throughout this 
+chapter, we assume $\fieldchar(k) > 2$, unless otherwise specified. For an extension $L / k$, as in 
+the case of elliptic curves, the set of points in $\vmathbb{A}_L^2$ satisfying 
+(\ref{equation:hyper-not2}) is denoted by $\mathcal{H}(L)$.
+\begin{definition}
+Let $P = (x, y)$ be a finite point on $\mathcal{H}$. The \textbf{involution} of $P$ is defined to be 
+$\tilde{P} = (x, -y)$. We also define $\tilde{\infty} = \infty$. The point $P$  is special if $y = 
+0$, it is called ordinary otherwise.
+\end{definition}
+Therefore, there are only a finite number of special points on $\mathcal{H}$, namely the points with 
+roots of $f(x)$ as their first coordinate. Throughout this chapter, except for 
+\refsection{section:hyper-ff}, we assume that $k = \overline{k}$, i.e. $k$ is algebraically closed.
+
+
+
+
+
+
+
+
+\section{Rational functions}
+\label{section:rational-functions}
+
+Let $C \subset \vmathbb{A}_k^2$ be an affine plane curve, defined over the field $k$, and given by 
+the equation $F = 0$ where $F \in k[x, y]$ is irreducible. Therefore, the ideal $\langle F \rangle 
+\subset k[x, y]$ is a prime ideal. The coordinate ring of $C$, denoted by $\Gamma_k(C)$, is defined 
+to be the quotient ring 
+$$
+\Gamma_k(C) = k[x, y] / \langle F \rangle
+$$
+which is an integral domain. Elements of $\Gamma_k(C)$ are called polynomial functions on $C$. We 
+simply write $\Gamma(C)$ when $k$ is clear from the context. Since $\Gamma(C)$ is an integral 
+domain, we can form its field of fractions denoted by $k(C)$. Elements of $k(C)$ are called 
+\textbf{rational functions} on $C$, and $k(C)$ itself is called the field of rational functions on 
+$C$. Every element $f \in k(C)$ is of the form $g / h$ where $g$ and $h$ are polynomial functions on 
+$C$. For a rational function $f \in k(C)$, and a point $P \in C$, we say that $f$ is defined at $P$ 
+if there are some polynomial functions $g, h \in \Gamma(C)$ such that $f = g / h$, and $h(P) \ne 0$. 
+Otherwise, $f$ is said to have a \textit{pole} at $P$, or $P$ is called a pole of $f$, and we write 
+$f(P) = \infty$.
+\begin{definition}
+A ring $R$ is called a local ring if it has a unique maximal ideal.
+\end{definition}
+Assume the set of non-units of a ring $R$ form an ideal $\mathfrak{m}$. Then $R$ is clearly a local 
+ring with $\mathfrak{m}$ as its maximal ideal. This is sometime used as a definition of local rings. 
+For a point $P \in C$, let $\mathcal{O}_P(C)$ denote the set of elements of $k(C)$ defined a $P$. 
+Then $\mathcal{O}_P(C)$ is clearly a ring such that $\Gamma(C) \subset \mathcal{O}_P(C) \subset 
+k(C)$. Let $f \in \mathcal{O}_P(C)$, and write $f = g / h$ with $g, h \in \Gamma(C)$, $h(P) \ne 0$. 
+The value of $f$ at $P$ is defined as $f(P) = g(P) / h(P)$ which is independent of the choice of $g$ 
+and $h$.
+\begin{lemma}
+$\mathcal{O}_P(C)$ is a local ring.
+\end{lemma}
+\begin{proof}
+An element $f \in \mathcal{O}_P(C)$ is a non-unit if and only if $f(P) = 0$. Let $\mathfrak{m} = \{ 
+f \in \mathcal{O}_P(C) \mid f(P) = 0\}$. Let $\phi: \mathcal{O}_P(C) \rightarrow k$ be the map $f 
+\mapsto f(P)$. Then $\phi$ is surjective, and $\ker \phi = \mathfrak{m}$. Therefore, $\mathfrak{m}$ 
+is a maximal ideal hence $\mathcal{O}_P(C)$ is a local ring. 
+\end{proof}
+A partial order on a set $\mathcal{A}$ is a reflexive, antisymmetric, and transitive relation on 
+$\mathcal{A}$. Let $\mathcal{A}$ be a set partially ordered by a relation $\le$. Then the following 
+statements are equivalent: i) Every non-decreasing sequence in $\mathcal{A}$ is stationary. ii) 
+Every non-empty subset of $\mathcal{A}$ has a maximal element. Assume that i) is true. If ii) is 
+false, then there is a non-empty subset $S$ of $\mathcal{A}$ with no maximal element. So, one can 
+construct an infinite strictly increasing sequence in $T$, a contradiction. Conversely, for any 
+non-decreasing sequence $x_1 \le x_2 \le \cdots$ let $S = \{ x_i, i \in \vmathbb{N} \}$. Then $S$ has 
+a maximal element $x_n$ for some integer $n$, hence $x_1 \le x_2 \le \cdots \le x_n = x_{n + 1} = 
+\cdots$. Now, for a ring $R$, let $\mathscr{I}$ be the set of ideals of $R$ ordered by inclusion 
+$\subseteq$. Then the condition i) on $\mathscr{I}$ is called the \textit{ascending chain condition} 
+(acc). The ring $R$ is said to be Noetherian if it satisfies either of i) or ii).
+\begin{proposition}
+A ring $R$ is Noetherian if and only if every ideal of $R$ is finitely generated.
+\end{proposition}
+\begin{proof}
+'$\Rightarrow$'. Let $I$ be an ideal of $R$, and let $\mathscr{I}$ be the set of all finitely 
+generated ideals contained in $I$. Then, by Zorn's lemma, $\mathscr{I}$ has a maximal element, say 
+$J$. If $J \ne I$ then let $a \in I$, and $a \notin J$. Then $J$ is a proper ideal of the finitely 
+generated ideal $J + Ra$ which is a contradiction. \\
+'$\Leftarrow$'. Let $I_1 \subseteq I_2 \subseteq \cdots$ be an ascending chain of ideals of $R$. 
+Then $J = \bigcup_{n = 1}^\infty I_n$ is an ideal of $R$ hence finitely generated, say by $\{ a_1, 
+a_2, \dots, a_r \}$. We have $a_i \in I_{n_i}$ for some $n_i$, $i = 1 , \dots, r$. Let $k = \max_{i 
+= 1}^r n_i$, then $J = I_k$, and hence we have $I_1 \subseteq I_2 \subseteq \cdots \subseteq I_k = 
+I_{k + 1} = \cdots$.
+\end{proof}
+\begin{proposition}
+$\mathcal{O}_P(C)$ is a Noetherian ring.
+\end{proposition}
+\begin{proof}
+It can easily be seen that $\Gamma(C)$ is a Noetherian ring. Let $I$ be an ideal of 
+$\mathcal{O}_P(C)$, and let $\{ a_1, a_2, \dots, a_k \}$ be a set of generators for the ideal $I 
+\cap \Gamma(C)$ of $\Gamma(C)$. Now, let $a \in I$, then there is an element $c \in \Gamma(C)$ with 
+$c(P) \ne 0$ such that $ca \in \Gamma(C)$. So, $ca \in I \cap \Gamma(C)$ hence $ca = \sum_{n = 1}^k 
+d_na_n$ where $d_n \in \Gamma(C)$. Thus, $a = \sum_{n = 1}^k \frac{d_n}{c}a_n$ which means that 
+$a_i$ generate $I$ in $\mathcal{O}_P(C)$. This completes the proof.
+\end{proof}
+\begin{remark}
+If a commutative ring $R$ is Noetherian, and $\mathfrak{p}$ is a prime ideal of $R$, then the 
+localization of $R$ with respect to $\mathfrak{p}$, denoted by $R_{\mathfrak{p}}$, is also 
+Noetherian. The ring $\mathcal{O}_P(C)$ is indeed the localization of the ring $\Gamma(C)$ with 
+respect to the prime ideal $\mathfrak{p} = \{ f \in \Gamma(C) \mid f(P) = 0 \}$.
+\end{remark}
+\begin{proposition}
+\label{proposition:dvr}
+Let $R$ be a Noetherian local domain that is not a field, and let $\mathfrak{m}$ be its maximal 
+ideal. If $\mathfrak{m}$ is principal then there is an element $\alpha \in R$ such that every 
+nonzero element $a \in R$ can be uniquely expressed in the form $a = \beta \alpha^n$ for some unit 
+$\beta \in R$ and nonnegative integer $n$.
+\end{proposition}
+\begin{proof}
+Let $\mathfrak{m} = (\alpha)$ for some non-unit $\alpha \in R$. We may assume that $a$ is not a 
+unit. Then $(a) \subseteq \mathfrak{m}$. We have $a = b_1\alpha$ for some $b_1 \in R$. If $b_1$ is a 
+unit we are done; otherwise let $b_1 = b_2\alpha$. The same thing holds for $b_2$ and so on. If this 
+process does not terminate then we have chain of ideals $(b_1) \subseteq (b_2) \subseteq \cdots$. 
+Since $R$ is Noetherian, this chain is stationary so that $(b_n) = (b_{n + 1}) = \cdots$ for some 
+$n$. So, $b_{n + 1} = cb_n = c\alpha b_{n + 1}$ hence $c\alpha = 1$, and $\alpha$ is a unit which is 
+a contradiction. Therefore, $a = \beta\alpha^k$ for some unit $\beta$ and some integer $k \ge 1$. 
+For the uniqueness let  $\beta_1\alpha^m = a = \beta_2\alpha^n$ with $m \ge n$, and $\beta_1, 
+\beta_2$ units. Then $\beta_1\alpha^{m - n} = \beta_2$ which implies $m = n$, and hence $\beta_1 = 
+\beta_2$.
+\end{proof}
+\begin{remark}
+For an ideal $\mathfrak{m} \ne (1)$ of a Noetherian domain $R$ we have $\bigcap_{n = 1}^\infty 
+\mathfrak{m}^n = 0$. This means that there is an integer $k \ge 1$ such that $(a) \subseteq 
+\mathfrak{m}^k$ and $(a) \nsubseteq \mathfrak{m}^{k + 1}$. Then $a = \beta \alpha^k$ for some unique 
+$\beta \in R$, and $\beta$ should be a unit because $(a) \nsubseteq \mathfrak{m}^{k + 1}$. 
+\end{remark}
+A ring $R$ satisfying the conditions of \refproposition{proposition:dvr} is called a 
+\textit{discrete valuation ring} (DVR), and the element $\alpha$ is called a \textit{uniformizer} 
+for $R$. For any element $a \in R$ write $a = \beta\alpha^d$ for some unit $\beta \in R$ and some 
+integer $d \ge 0$. Then the order of $a$, denoted by $\order(a)$, is defined to be $d$. There maybe 
+more than one uniformizer for a discrete valuation ring $R$. Let $\alpha$ and $\lambda$ be two 
+uniformizers for $R$. Then $\lambda = \beta_1\alpha^{n_1}$  , and $\alpha = \beta_2\lambda^{n_2}$. 
+Thus, $\alpha = \beta_1^{n_2}\beta_2\alpha^{n_1n_2}$ which implies that $\alpha^{n_1n_2 - 1}$ is a 
+unit. So, $n_1n_2 = 1$ hence $n_1 = n_2 = 1$. Therefore, the ring $R$ has a unique, up to a unit, 
+uniformizer. In particular, the order of an element $a$ is independent of the choice of the 
+uniformizer. 
+\begin{lemma}
+\label{lemma:dvr-ord}
+Let $R$ be a DVR, and let $a, b \in R$. Then
+\begin{enumerate}
+\item 
+\label{item:dvr-ord-prod}
+$\order(ab) = \order(a) + \order(b)$.
+\item 
+\label{item:dvr-ord-sum}
+$\order(a + b) \ge \min(\order(a) + \order(b))$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+Let $\alpha$ be a uniformizer for $R$, and let $a = \beta_1\alpha^{n_1}$, and $b = 
+\beta_2\alpha^{n_2}$ with $\beta_1, \beta_2 \in R$ units. Also let $n_1 \ge n_2$. Then $ab = 
+\beta_1\beta_2\alpha^{n_1 + n_2}$ which proves \ref{item:dvr-ord-prod}. Also $a + b = 
+\alpha^{n_2}(\beta_1\alpha^{n_1 - n_2} + \beta_2)$. We can write $(\beta_1\alpha^{n_1 - n_2} + 
+\beta_2) = \beta_3\alpha^{n_3}$ for some $n_3 \ge 0$, and some unit $\beta_3$. So, $a + b = 
+\beta_3\alpha^{n_1 + n_3}$ which proves \ref{item:dvr-ord-sum}.
+\end{proof}
+Let $K$ be the field of fractions of $R$. The definition domain of the order function on $R$ can be 
+extended to $K$ in a natural way as follows. Let $f \in K$, and let $f = a / b$ for some $a, b \in 
+R$. Then $\order(f) = \order(a) - \order(b)$. This is clearly independent of choices of $a$ and $b$, 
+and also \reflemma{lemma:dvr-ord} remains true for elements of $K$.
+\begin{theorem}
+\label{theorem:un-par}
+Let $P$ be a nonsingular point on $C$. Then $\mathcal{O}_P(C)$ is a discrete valuation ring. 
+Moreover, any line $L$ intersecting $C$ nontangentially at $P$ is a uniformizer for 
+$\mathcal{O}_P(C)$.
+\end{theorem}
+\begin{proof}
+Let $P = (a, b)$. It can easily be seen that $\mathfrak{m} = \langle x - a, y - b\rangle$ is the 
+maximal ideal of $\mathcal{O}_P(C)$. We can write 
+$$
+F = (x - a)\frac{\partial F}{\partial x}(P) + (y - b)\frac{\partial F}{\partial y}(P) + g(x, y)
+$$
+for some $g \in k[x, y]$. Since $F$ is nonsingular at $P$, either $\frac{\partial F}{\partial x}(P) 
+\ne 0$ or $\frac{\partial F}{\partial y}(P) \ne 0$. Assume $\frac{\partial F}{\partial x}(P) \ne 0$. 
+Then, grouping together the terms with $(x - a)$ we have $F = (x - a)r(x, y) - (y - b)^\ell s(x, y)$ 
+where $r(P) \ne 0$, and $s(P) \ne 0$, and $\ell \ge 1$ is the largest integer such that 
+$\frac{\partial^i F}{\partial y^i}(P) = 0$ for all $1 \le i \le \ell - 1$. Let $\bar{r}, \bar{s}$ be 
+the images of $r$ and $s$ in $\mathcal{O}_P(C)$ respectively. Then $(x - a)\bar{r}(x, y) = (y - 
+b)^\ell\bar{s}(x, y)$ hence $(x - a) = (y - b)^\ell\bar{s}(x, y)\bar{r}^{-1}(x, y) \in \langle y - b 
+\rangle$. Thus, $\mathfrak{m} = \langle y - b \rangle$ is principal, and so, by 
+\refproposition{proposition:dvr}, $\mathcal{O}_P(C)$ is a discrete valuation ring. For the second 
+part of the theorem, let $L'$ be the tangent to $F$ at $P$. Since the line $L$ is distinct from 
+$L'$, there is always an affine transformation taking $L, L', P$ to $y - b, x - a, P$ respectively. 
+By the first part, $y - b$ is a uniformizer for $\mathcal{O}_P(C)$, hence also $L$.  
+\end{proof}
+Now, let $\mathcal{H}$ be the hyperelliptic curve (\ref{equation:hyper-not2}). The polynomial $F(x, 
+y) = y^2 - f(x)$ is irreducible over $\overline{k}$; For the only nontrivial factorization of $F$ is 
+of the form $F(x, y) = (y - a(x))(y - b(x))$ which implies that $a(x) + b(x) = 0$ hence $\deg a = 
+\deg b$. Thus, $2\deg a = \deg a + \deg b = \deg f = 2g + 1$ which is a contradiction. We denote by 
+$\order_{P}$  the order function on $k(\mathcal{H})$ defined by the discrete valuation ring 
+$\mathcal{O}_P(\mathcal{H})$. For an ordinary point $P = (a, b)$ on $\mathcal{H}$, $\frac{\partial 
+F}{\partial y}(P) = 2b \ne 0$. So, $L: x - a$ is not a tangent to $\mathcal{H}$ at $P$, and hence it 
+is a uniformizer for $\mathcal{O}_P(\mathcal{H})$ by \reftheorem{theorem:un-par}. If $P = (a, 0)$ is 
+a special point then $\frac{\partial F}{\partial y}(P) = 2b = 0$ hence $L: y$ is not a tangent, and 
+so a uniformizer for $\mathcal{O}_P(\mathcal{H})$. 
+
+To find a uniformizer at $P = \infty$ we need to use the projective equation of $\mathcal{H}$. Let 
+$f(x) = x^{2g + 1} + a_{2g}x^{2g} + \cdots + a_1x+ a_0$. Then the projective equation is 
+$\mathcal{H}: z^{2g - 1}y^2 = x^{2g + 1} + a_{2g}zx^{2g} + \cdots + a_1z^{2g}x+ a_0z^{2g + 1}$, and 
+the point at infinity is $T = (0: 1: 0)$. Changing to the coordinates $w = z / y, v = x / y$ gives 
+the affine curve
+\begin{equation}
+\label{equation:inf-uni}
+\mathcal{G}: \quad w^{2g - 1} = v^{2g + 1} + a_{2g}wv^{2g} + \cdots + a_1w^{2g}v + a_0w^{2g + 1}
+\end{equation}
+with $Q = (0, 0)$ correspond to the point at infinity. Let $\alpha = 1 + a_{2g}(w / v) + \cdots + 
+a_0(w / v)^{2g + 1}$. From (\ref{equation:inf-uni}) we have $(w / v)^{2g + 1} / \alpha = w^2$ which 
+implies that $w / v = 0$ at $Q$ hence $\alpha \in \mathcal{O}_Q(\mathcal{G})$ is a unit. Again from 
+(\ref{equation:inf-uni}) we have $w^{2g - 1} = v^{2g + 1}\alpha$. Let $u = v^g / w^{g - 1}$. It can 
+easily be seen that $\mathfrak{m} = \langle w, v \rangle$ is the maximal ideal of 
+$\mathcal{O}_Q(\mathcal{G})$. We have $u^2 = \alpha^{-1}w / v = 0$ at $Q$ hence $u \in 
+\mathfrak{m}$. It can be readily verified that $v = \alpha^{g - 1}u^{2g - 1}$, and $w = 
+\alpha^gu^{2g + 1}$. So, $u$ is a uniformizer for $\mathcal{O}_Q(\mathcal{G})$. Therefore, $u = v^g 
+/ w^{g - 1} = x^g / yz^{g - 1}$ is a uniformizer for the projective local ring 
+$\mathcal{O}_T(\mathcal{H})$, and hence $x^g / y$ is a uniformizer for the affine local ring 
+$\mathcal{O}_\infty(\mathcal{H})$. From the above we have $\order_\infty(x) = \order_T(x / z) = 
+\order_Q(v / w) = 2g - 1 - 2g - 1 = -2$, and $\order_\infty(y) = \order_T(y / z) = \order_Q(1 / w) = 
+-2g - 1$. 
+\begin{corollary}
+Let $P = (a, 0)$ be a special point on $\mathcal{H}$. Then $\order_P(x - a) = 2$. In other words, $x 
+- a = y^2g(x, y)$ where $g(P) \ne 0, \infty$.
+\end{corollary}
+\begin{proof}
+It is clear from the proof of \reftheorem{theorem:un-par}.
+\end{proof}
+\begin{corollary}
+\label{corollary:finite-zp}
+Let $f \in k(\mathcal{H})^\times$ be a rational function. Then $f$ has a finite number of zeros and 
+poles, and $\sum_{P \in \mathcal{H}} \order_P(f) = 0$.
+\end{corollary}
+\begin{proof}
+It suffices to prove the statement for polynomial functions. Let $l(x) = x - a \in k[x]$, and let $P 
+\in \mathcal{H}$ be a point with $a$ as its $x$-coordinate. Then $l(x)$ has only one pole of order 
+$2$ at $\infty$. If $P$ is an ordinary point then $l(x)$ has a simple zero at $P$, and a simple zero 
+at $\tilde{P}$; otherwise $l(x)$ has a double zero at $P$. Consequently, any polynomial $l(x) \in 
+k[x]$ has a finite number of zeros and poles such that if $\deg l(x) = n$ then $\sum_{P \in 
+\mathcal{H}\backslash \{\infty\}} \order_P(f) = 2n$, and $\order_\infty(f) = -2n$. 
+
+Let $g \in \Gamma(\mathcal{H})$ be a nonzero polynomial function. Then we can write $g = a(x) + 
+yb(x)$ for some polynomials $a, b \in k[x]$. Let $\bar{g} = a(x) - yb(x)$. Since the mapping 
+$\varphi: \mathcal{O}_P(\mathcal{H}) \rightarrow \mathcal{O}_{\tilde{P}}(\mathcal{H})$, $\varphi(f) 
+= \bar{f}$ is an isomorphism, we have $\order_P(g) = \order_{\tilde{P}}(\bar{g})$ for all $P \in 
+\mathcal{H}$, and hence $\sum_{P \in \mathcal{H}} \order_P(g) = \sum_{P \in \mathcal{H}} 
+\order_{\tilde{P}}(\bar{g}) = \sum_{P \in \mathcal{H}} \order_P(\bar{g})$. But $g\bar{g} \in k[x]$, 
+and by above, both $g$ and $\bar{g}$ have finite number of zeros and poles, and
+\[
+\sum_{P \in \mathcal{H}} \order_P(g) = \frac{1}{2}\left( \sum_{P \in \mathcal{H}} \order_P(g) + 
+\sum_{P \in \mathcal{H}} \order_P(\bar{g}) \right) = \frac{1}{2}\sum_{P \in \mathcal{H}} 
+\order_P(g\bar{g}) = 0. \qedhere
+\]
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+\section{Divisors}
+
+A \textit{divisor} $D$ on a hyperelliptic curve $\mathcal{H}$ is a formal sum $D = \sum_{P \in 
+\mathcal{H}} n_p P$ where $n_P \in \vmathbb{Z}$, and $n_P = 0$ for almost all $P \in \mathcal{H}$. 
+Therefore, the set $\mathbf{D}$ of all divisors $D$ on $\mathcal{H}$ is a free $\vmathbb{Z}$-module, 
+i.e. a free abelian group. The \textit{degree} of a divisor $D$ is defined to be $\deg(D) = \sum_{p 
+\in \mathcal{H}}n_P \in \vmathbb{Z}$. For divisors $D_1$ and $D_2$, we clearly have $\deg(D_1 + D_2) 
+= \deg(D_1) + \deg(D_2)$. We denote by $\mathbf{D}^0$ the set of all divisors of degree zero, which 
+is clearly a subgroup of $\mathbf{D}$. 
+\begin{definition}
+For divisors $D_1 = \sum_{P \in \mathcal{H}} m_PP$ and $D_2 = \sum_{P \in \mathcal{H}} n_PP$ we say 
+$D_1 \ge D_2$ if $m_P \ge n_P$ for all $P \in \mathcal{H}$. We also define the greatest common 
+divisor of $D_1$ and $D_2$ as
+$$
+\gcd(D_1, D_2) = \sum_{P \in \mathcal{H}} \min(n_P, m_P)(P - \infty)
+$$
+\end{definition}
+Let $f \in k(\mathcal{H})^\times$ be a rational function. Then define the divisor of $f$ to be 
+$\divisor(f) = \sum_{P \in \mathcal{H}} \order_P(f)P$, which is well defined, and has degree zero by 
+\refcorollary{corollary:finite-zp}. For example, for a finite point $P = (a, b) \in \mathcal{H}$, 
+$\divisor_P(x - a) = P + \tilde{P} - 2\infty$; Because if $P$ is special then $x - a$ has a double 
+zero at $P = \tilde{P}$, otherwise, it has a simple zero at $P$, and simple zero at $\tilde{P}$. For 
+every $f_1, f_2 \in k(\mathcal{H})$ we have $\divisor(f_1f_2) = \divisor(f_1) + \divisor(f_2)$, and 
+$\divisor(f_1 / f_2) = \divisor(f_1) - \divisor(f_2)$. These are simply inherited from the order 
+function. A divisor $D \in \mathbf{D}$ is said to be a \textit{principal divisor} if there is a 
+rational function $f \in k(\mathcal{H})$ such that $D = \divisor(f)$.
+\begin{proposition}
+\label{proposition:div-const}
+Let $f_1, f_2 \in k(\mathcal{H})^\times$ be rational functions. Then
+\begin{enumerate}
+\item 
+\label{item:div-const}
+$\divisor(f_1) \ge 0 \Leftrightarrow f_1 \in k$.
+\item 
+\label{item:div-sim}
+$\divisor(f_1) = \divisor(f_2) \Leftrightarrow f_1 = cf_2$ for some $c \in k$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+Since $\divisor(f_1) \ge 0$, $f_1 \in \mathcal{O}_P(\mathcal{H})$ for all $P \in \mathcal{H}$. Let 
+$f_1(P) = c \in k$ for some $P \in \mathcal{H}$. Then we still have $\divisor(f_1 - c) \ge 0$, but 
+$\deg(\divisor(f_1 - c)) > 0$ which is a impossible by \refcorollary{corollary:finite-zp} unless 
+$f_1 - c = 0$ hence $f_1 = c$. This proves part \ref{item:div-const}. For part \ref{item:div-sim}, 
+we have $\divisor(f_1) = \divisor(f_2) \Leftrightarrow \divisor(f_1 / f_2) = 0 \Leftrightarrow f_1 / 
+f_2 \in k$ by part \ref{item:div-const}.
+\end{proof}
+\begin{definition}
+The set of all principal divisors is a subgroup of $\mathbf{D}^0$ denoted by $\mathbf{P}$. The 
+quotient group $J(\mathcal{H}) = \mathbf{D}^0 / \mathbf{P}$ is called the \textbf{jacobian} of 
+$\mathcal{H}$. An element $D \in J(\mathcal{H})$ is called a divisor class of degree zero.
+\end{definition}
+Let $D \in \mathbf{D}$, and define
+$$
+\mathcal{L}(D) = \{ f \in k(\mathcal{H}) \mid \divisor(f) + D \ge 0 \} \cup \{ 0 \}
+$$
+It can easily be verified that $\mathcal{L}(D)$ is a vector space over $k$. Let $\ell(D) = \dim_k 
+\mathcal{L}(D)$.
+\begin{lemma}
+\label{lemma:L-point-add}
+Let $D \in \mathbf{D}$ be a divisor, and let $P \in \mathcal{H}$. Then $\dim_k(\mathcal{L}(D + P) / 
+\mathcal{L}(D)) \le 1$.
+\end{lemma}
+\begin{proof}
+It clear that $\mathcal{L}(D) \subseteq \mathcal{L}(D + P)$. Let $\alpha$ be a uniformizer for 
+$\mathcal{O}_P(\mathcal{H})$, and let $n_P$ be the coefficient of $P$ in $D$. Define the mapping 
+$\phi: \mathcal{L}(D + P) \rightarrow k$ by $\phi(f) = (\alpha^{n_P + 1}f)(P)$. Since $f \in 
+\mathcal{L}(D + P)$, $\order_P(f) \ge -n_P - 1$ hence $\phi$ is well-defined. It can easily be 
+verified that $\phi$ is a $k$-linear map with $\ker \phi = \mathcal{L}(D)$. Therefore, there exists 
+an embedding $\mathcal{L}(D + P) / \mathcal{L}(D) \rightarrow k$, and the result follows.
+\end{proof}
+\begin{proposition}
+\label{proposition:L-dim}
+Let $D, D_1, D_2 \in \mathbf{D}$ be divisors on $\mathcal{H}$. Then
+\begin{enumerate}
+\item
+\label{item:L-1}
+$\mathcal{L}(0) = k$. Also $\mathcal{L}(D) = 0$ if $\deg(D) < 0$.
+\item
+\label{item:L-2}
+If $D_1 \le D_2$ then $\mathcal{L}(D_1) \subseteq \mathcal{L}(D_2)$, and $\dim_k(\mathcal{L}(D_2) / 
+\mathcal{L}(D_1)) \le \deg(D_2 - D_1)$.
+\item
+\label{item:L-3}
+If $D_1 \equiv D_2 \pmod {\mathbf{P}}$ then $\mathcal{L}(D_1) \cong \mathcal{L}(D_2)$.
+\item
+\label{item:L-4}
+$\ell(D) < \infty$. Moreover, if $\deg(D) \ge 0$ then $\ell(D) \le \deg(D) + 1$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+\ref{item:L-1}. We have $f \in \mathcal{L}(0) \Leftrightarrow \divisor(f) \ge 0 \Leftrightarrow f 
+\in k$ By \refproposition{proposition:div-const}.(\ref{item:div-const}). Let $\deg(D) < 0$, and $f 
+\in \mathcal{L}(D)$. Then $\divisor(f) + D \ge 0$, so $0 \le \deg(\divisor(f) + D) = 
+\deg(\divisor(f)) + \deg(D) = \deg(D) < 0$ which impossible unless $f = 0$. \\
+\ref{item:L-2}. If $f \in \mathcal{L}(D_1)$ then $\divisor(f) + D_2 \ge \divisor(f) + D_1 \ge 0$, so 
+$f \in \mathcal{L}(D_2)$ hence $\mathcal{L}(D_1) \subseteq \mathcal{L}(D_2)$. Let $D_2 = D_1 + P_1 + 
+P_2 + \cdots + P_n$ where $P_i$ are not necessarily distinct. Using induction and 
+\reflemma{lemma:L-point-add} we have $\dim_k(\mathcal{L}(D_2) / \mathcal{L}(D_1)) \le n = \deg(D_2 - 
+D_1)$. \\
+\ref{item:L-3}. Assume $D_1 = D_2 + \divisor(f)$ for some $f \in k(\mathcal{H})^\times$. Then the 
+mapping $\phi: \mathcal{L}(D_1) \rightarrow \mathcal{L}(D_2)$, $\phi(g) = fg$ is an isomorphism of 
+vector spaces. \\
+\ref{item:L-4}. By part \ref{item:L-1}, we my assume $\deg(D) \ge 0$. Let $P \in \mathcal{H}$ be an 
+arbitrary point, and let $D_3 = D - (\deg(D) + 1)P$. Then $\mathcal{L}(D_3) = 0$ by part 
+\ref{item:L-1}, and hence $\ell(D) = \dim_k(\mathcal{L}(D) / \mathcal{L}(D_3)) \le \deg(D) + 1$ by 
+part \ref{item:L-2}.
+\end{proof}
+\begin{definition}
+Let $D = \sum_{P \in \mathcal{H}} n_PP$ be a divisor. Then the \textit{support} of $D$ is defined to 
+be $\supp(D) = \{ P \in \mathcal{H} \mid n_P \ne 0 \}$. A \textit{semi-reduced} divisor is a divisor 
+of the form $\sum_{i = 1}^k n_i(P_i - \infty)$ such that 
+\begin{enumerate}[(i)]
+\item $n_i \ge 0$ for all $i$,
+\item if $P_i$ is a special point then $n_i \le 1$,
+\item if $P_i \in \supp(D)$ then $\tilde{P_i} \notin \supp(D)$.
+\end{enumerate}
+If we also have $\sum_{i = 1}^k n_i \le g$, where $g$ is the genus of $\mathcal{H}$, then $D$ is 
+said to be a \textit{reduced} divisor.
+\end{definition}
+\begin{lemma}
+\label{lemma:d-eq-semi}
+For every divisor $D = \sum_{i = 1}^kn_iP_i \in \mathbf{D}^0$ there is a semi-reduced divisor $D_1 = 
+\sum_{i = 1}^\ell m_i(P_i - \infty)$ such that $D_1 \equiv D \pmod {\mathbf{P}}$. Moreover, $\sum_{i 
+= 1}^\ell m_i \le \sum_{P_i \in \supp(D)\backslash\infty}\abs{n_i}$.
+\end{lemma}
+\begin{proof}
+Let $D = \sum_{P \in \mathcal{H}} n_PP$. For every finite point $P = (a, b) \in \supp(D)$, if $n_P < 
+0$ then the term $n_pP$ can be eliminated by subtracting the principal divisor $\divisor((x - 
+a)^{n_P}) = n_P(P + \tilde{P} - 2\infty)$ from $D$. So, we obtain a divisor $D_1 = \sum m_i(P - 
+\infty) \in \mathbf{D}^0$ such that $m_i \ge 0$ for all $i$, and $D_1 \equiv D \pmod {\mathbf{P}}$. 
+Now, for every finite point $P = (a, b) \in \supp(D_1)$ we do the following. If $P$ is a special 
+point then we subtract $\divisor((x - a)^{(m_P - \delta) / 2})$, where $\delta \equiv m_P \pmod 2$, 
+from $D_1$. Otherwise, if $\tilde{P} \in \supp(D_1)$ then we subtract $\divisor((x - a)^r)$, where 
+$r = \min(m_{\tilde{P}}, m_P)$, from $D_1$. This way, we obtain a divisor $D_2 \equiv D_1 \pmod 
+{\mathbf{P}}$ which is clearly a semi-reduced divisor. The second part is clear by the construction.
+\end{proof}
+\begin{proposition}
+\label{proposition:always-semi}
+For every polynomial $g(x) \in k[x]$ the divisor $\divisor(g(x) - y)$ is semi-reduced. Moreover, if 
+$g(x)^2 - f(x) = \prod_{i = 1}^n(x - a_i)^{m_i}$ then $\divisor(g(x) - y) = \sum_{i = 1}^nm_i(P_i - 
+\infty)$ where $P_i = (a_i, g(a_i))$.
+\end{proposition}
+\begin{proof}
+We have 
+\begin{align*}
+\divisor(g(x) - y) + \divisor(g(x) + y) 
+&= \divisor(g(x)^2 - f(x)) = \divisor(\prod_{i = 1}^n(x - a_i)^{m_i}) \\
+&= \sum_{i = 1}^n \divisor((x - a_i)^{m_i}) = \sum_{i = 1}^n m_i\divisor(x - a_i) \\
+&= \sum_{i = 1}^n m_i(P_i + \tilde{P}_i - 2\infty)
+\end{align*}
+where $P_i = (a_i, g(a_i))$. If $P_i$ is an ordinary point then $P_i$ is a zero of $g(x) - y$ if and 
+only if $\tilde{P}_i$ is a zero of $g(x) + y$, and $P_i$ or $\tilde{P}_i$ can not be a zero of both 
+$g(x) - y$ and $g(x) + y$. If $P_i$ is a special point, i.e. $P_i = (a_i, 0)$, then $g(a_i) = f(a_i) 
+= 0$ so that $g(x)$ has a double zero at $P_i$. Since $y$ has a simple zero at $P_i$, $g(x) - y$ has 
+a simple zero at $P_i$. Also we have $(x - a_i)^2 \nmid g(x)^2 - f(x)$, because otherwise, since $(x 
+- a_i)^2 \mid g(x)^2$, we have $(x - a_i)^2 \mid f(x)$ which is a contradiction because $f(x)$ has 
+no multiple roots. Thus, $m_i = 1$. Putting all this together yields $\divisor(g(x) - y) = \sum_{i = 
+1}^nm_i(P_i - \infty)$, and $\divisor(g(x) + y) = \sum_{i = 1}^nm_i(\tilde{P}_i - \infty)$ where 
+$m_i = 1$ if $P_i$ is a special point.
+\end{proof}
+\begin{theorem}[\textbf{Riemann-Roch}]
+\label{theorem:Riemann-Roch}
+For any algebraic curve $C$, there exists a divisor $\omega$ and an integer $g$ such that for any 
+divisor $D$ on $C$,
+$$
+\ell(D) = \deg(D) - g + 1 + \ell(\omega - D)
+$$
+\end{theorem}
+\begin{proof}
+See \cite[ch. 1]{Lang1982} or \cite[ch. 12]{Bump1998}.
+\end{proof}
+\begin{remark}
+The divisor $\omega$ is the divisor of a differential on $C$, and $g$ is called the genus of $C$.
+\end{remark}
+\begin{theorem}
+\label{theorem:unique-redu}
+For any divisor $D \in \mathbf{D}^0$, there exists a unique reduced divisor $D_1$ such that $D_1 
+\equiv D \pmod {\mathbf{P}}$.
+\end{theorem}
+\begin{proof}
+(Existence) By \reftheorem{theorem:Riemann-Roch}, $\ell(D) \ge \deg(D) - g + 1$ for any divisor 
+$D$.\footnote{This is called Riemann inequality.} Replacing $D$ by $D + g\infty$ we have $\ell(D + 
+g\infty) \ge g - g + 1 = 1$. This means that there is a rational function $f \in 
+k(\mathcal{H})^\times$ such that $\divisor(f) + D + g\infty \ge 0$. Let $D_1 = \divisor(f) + D$. 
+Then $D_1 + g\infty \ge 0$ which means that $D_1$ is of the form $\sum_in_i(P_i - \infty)$ with $n_i 
+\ge 0$, and $\sum_in_i = g$. The result now follows from \reflemma{lemma:d-eq-semi}. \\
+(Uniqueness) Letting $D = 0$ in \reftheorem{theorem:Riemann-Roch}, we have $\ell(0) = 0 - g + 1 + 
+\ell(\omega)$. By \refproposition{proposition:L-dim}.(\ref{item:L-1}), $\ell(0) = 1$ hence 
+$\ell(\omega) = g$. Similarly, $\ell(\omega) = \deg(\omega) - g + 2$ by setting $D = \omega$. 
+Therefore, $\deg(\omega) = 2g - 2$. Now, let $D_1 \equiv D_2 \pmod {\mathbf{P}}$ be two reduced 
+divisors. Assume that $D_1 \ne D_2$, and let $D = D_1 - D_2$ be a principal divisor. By 
+\reflemma{lemma:d-eq-semi}, there is a principal divisor $D_3 \equiv D \pmod {\mathbf{P}}$ with $D_3 
++ 2g\infty \ge 0$. It can easily be verified that $D_3 \ne 0$ by the proof of 
+\reflemma{lemma:d-eq-semi}. Let $\divisor(f) = D_3$ for some $f \in k(\mathcal{H})^\times$. Then $f 
+\in \mathcal{L}(2g\infty)$. Letting $D = 2g\infty$ in \reftheorem{theorem:Riemann-Roch}, we have 
+$\ell(2g\infty) = g + 1 - \ell(\omega - 2g\infty)$. Since $\deg(\omega - 2g\infty) = -2$ by above, 
+$\ell(\omega - 2g\infty) = 0$ by \refproposition{proposition:L-dim}.(\ref{item:L-1}), and hence 
+$\ell(2g\infty) = g + 1$. But, $x^i \in \mathcal{L}(2g\infty)$ for all $i = 0, \dots, g$. Since $1, 
+x, \dots, x^g$ have poles of different order, they are linearly independent. So, they form a basis 
+for $\mathcal{L}(2g\infty)$. This means that $f$ is a function in $x$. If $f$ in nonconstant then it 
+has a root $a \in k$. Let $P = (a, b)$ be a point on $\mathcal{H}$. If $P$ is ordinary then 
+$\tilde{P}$ is also a zero of $f$ hence $P, \tilde{P} \in \supp(D_3)$ which is a contradiction, 
+since $D_3$ is semi reduced. If $P$ is special then $f$ has a double zero at $P$ hence the 
+coefficient of $P$ in $D_3$ is at least $2$, contradiction again. Thus, $f$ is constant hence $D_3 = 
+0$, a contradiction. 
+\end{proof}
+\begin{remark}
+The group $J(\mathcal{H})$ can be considered as an algebraic variety. It is, indeed, an abelian 
+variety of dimension $g$ called the jacobian variety. For any point $P \in \mathcal{H}$, the divisor 
+$P - \infty$ is reduced. Therefore, by \reftheorem{theorem:unique-redu}, the mapping
+$$
+\setlength\arraycolsep{2pt}
+\begin{array}{llll}
+\varphi: & \mathcal{H} & \longrightarrow & J(\mathcal{H}) \\
+ & P & \longmapsto & P - \infty
+\end{array}
+$$
+is an embedding of $\mathcal{H}$ into its jacobian. In the case of elliptic curves, this is clearly 
+an isomorphism, hence an elliptic curve is an abelian variety of dimension 1. If $\ell$ is an 
+integer such that $\fieldchar(k) \nmid \ell$; then the $\ell$-torsion subgroup of $J(\mathcal{H})$, 
+denoted by $J(\mathcal{H})[\ell]$, is isomorphic to $(\vmathbb{Z} / \ell\vmathbb{Z})^{2g}$, see 
+\cite[ch. 4, 5]{Cohen2006}. When $g = 1$, i.e. $\mathcal{H}$ is an elliptic curve, this is a special 
+case of \reftheorem{theorem:n-torsion-struct}. Analogous to the case of elliptic curves, there are 
+\emph{division polynomials} for hyperelliptic curves closely related to the torsion elements of 
+$J(\mathcal{H})$. In 1994, Cantor \cite{Cantor1994} gave these polynomials defined by efficiently 
+computable recurrences.
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+\section{Mumford Representation}
+
+By \reftheorem{theorem:unique-redu}, the elements of the group $J(\mathcal{H})$ are indeed reduced
+divisors. So, theoretically, given two reduced divisors $D_1, D_2$, we can add them, and reduce the 
+result to obtain another reduced divisor. However, representing elements of $J(\mathcal{H})$ by 
+divisor classes, i.e by formal sums of points on $\mathcal{H}$, is not computationally very useful. 
+In this section, we present a concrete representation of the elements of $J(\mathcal{H})$ by pairs 
+of polynomials, which was proposed by Mumford \cite{Mumford1984}. 
+
+Let $P = (a, b)$ be a point on $\mathcal{H}$, and let $g \in k(\mathcal{H})$ be a rational function. 
+Let $\mathcal{O}_P(\mathcal{H})$ be the local ring at $P$, and let $t$ be a uniformizer for it. Then 
+$g = t^mh$ for a unique, not necessarily positive, integer $m$, and rational function $h \in 
+k(\mathcal{H})$ such that $h(P) \ne 0, \infty$. If $h$ is not a constant then let $h(P) = c \in k$. 
+Then $h(x, y) - c$ has a zero at $P$, so $h(x, y) - c = t^{m_1}h_1(x, y)$ for a unique integer $m_1 
+\ge 1$, and a rational function $h_1$ such that $h_1(P) \ne 0, \infty$. Hence $h(x, y) = c + th_1(x, 
+y)$. The same thing can be done to $h_1$, and so on. Therefore, for any given $k \ge m$, we can 
+uniquely write 
+\begin{equation}
+\label{equation:u-p-series}
+g(x, y) = \sum_{n = m}^{k - 1} c_nt(x, y)^n + t(x, y)^kh_k(x, y)
+\end{equation}
+where $m \in \vmathbb{Z}$, and $h_k \in k(\mathcal{H})$ with $h_k(P) \ne 0, \infty$.
+\begin{proposition}
+\label{proposition:mum-sq}
+Let $f$ be the polynomial in \ref{equation:hyper-not2}. For any ordinary point $P = (a, b) \in 
+\mathcal{H}$, and any integer $k \ge 1$, there exists a unique polynomial $g \in k[x]$ such that 
+$g(a) = b$, and $g(x)^2 \equiv f(x) \mod {(x - a)^k}$.
+\end{proposition}
+\begin{proof}
+Since $P$ is ordinary, and $y$ is a polynomial function, $m = 0$, and $t = (x - a)$ in 
+(\ref{equation:u-p-series}). Thus, $y = \sum_{n = 0}^{k - 1} b_n(x - a)^n + (x - a)^kh(x, y)$ where 
+$b_0 = b$. Let $g(x) = \sum_{n = 0}^{k - 1} b_n(x - a)^n$. Then $g(a) = b_0 = b$ and obviously 
+$g(x)^2 \equiv y^2 \equiv f(x) \mod (x - a)^k$.
+\end{proof}
+\begin{theorem}
+\label{theorem:mum-rep}
+Let $\mathcal{S}$ be the set of all semi-reduced divisors on $\mathcal{H}$, and let $\mathcal{P}$ be 
+the set of pairs of of polynomials $(u, v) \in k[x] \times k[x]$ such that \emph{(\romnum{1})} $u$ 
+is monic, and $\deg v < \deg u$ \emph{(\romnum{2})} $u \mid v^2 - f$. Then the following mapping is 
+a bijection.
+\begin{equation}
+\label{equation:Mum-corr}
+\setlength\arraycolsep{2pt}
+\begin{array}{llll}
+\psi: & \mathcal{P} & \longrightarrow & \mathcal{S} \\
+& (u, v) & \longmapsto & \gcd(\divisor(u), \divisor(v - y))
+\end{array}
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let $(u, v)$ be a pair of polynomials as in the theorem. By 
+\refproposition{proposition:always-semi}, $\divisor(v - y)$ is semi-reduced hence $\gcd(\divisor(u), 
+\divisor(v - y))$ is semi-reduced. \\
+$\psi$ is \textbf{surjective}: Let $D = \sum_{i = 1}^km_i(P_i - \infty) \in \mathcal{S}$, where $P_i 
+= (a_i, b_i)$, be a semi-reduced divisor. Let $u(x) = \prod_{i = 1}^k(x - a_i)^{m_i}$. We will find 
+a set of polynomials $v_i(x)$, $i = 1, \dots, k$ such that $v_i(x)^2 \equiv f(x) \mod (x - 
+a_i)^{m_i}$, and $v_i(a_i) = b_i$. If $P_i$ is a special point then $m_i = 1$. Set $v_i(x) = 0$. 
+Then we have $v_i(x)^2 = 0 \equiv f \mod (x - a_i)$, and $v_i(a_i) = 0 = b_i$. If $P_i$ is ordinary 
+then let $v_i(x)$ be the polynomial $g(x)$ in \refproposition{proposition:mum-sq} with $k = m_i$. By 
+the Chinese remaindering theorem, there exists a a unique polynomial $v(x) \in k[x]$ such that $v(x) 
+\equiv v_i(x) \mod (x - a_i)^{m_i}$ for all $i$, and $\deg v(x) < \sum_{i = 1}^k m_i = \deg u(x)$. 
+We clearly have $u \mid v^2 - f$. Let $v(x)^2 - f(x) = \prod_{i = 1}^k(x - a_i)^{m_i}\prod_{j = 
+1}^\ell (x - c_j)^{n_i}$. Then by \refproposition{proposition:always-semi}, $\divisor(v(x) - y) = D 
++ \sum_{j = 1}^\ell n_i(P_j - \infty)$ where $P_j = (c_j, v(c_j))$. Therefore, $D = 
+\gcd(\divisor(u), \divisor(v - y))$ hence $\psi(u, v) = D$. \\
+$\psi$ is \textbf{injective}: Let $\psi(u_1, v_1) = \psi(u_2, v_2)$. By construction $u_1 = u_2$. We 
+have $v_1(x) - v_2(x) = (v_1(x) - y) - (v_2(x) - y)$. So, $v_1(x) - v_2(x)$ vanishes at least to 
+order $m_i$ at $P_i$ hence it has at least $\sum_{i = 1}^k m_i = \deg u(x)$ zeros. This is a 
+contradiction since $\deg(v_1(x) - v_2(x)) < \deg u(x)$. Therefore $v_1(x) - v_2(x)$ is the zero 
+polynomial.
+\end{proof}
+A direct corollary of \reftheorem{theorem:unique-redu}, and the proof of 
+\reftheorem{theorem:mum-rep} is that every reduced divisor $D$, i.e. every element of 
+$J(\mathcal{H})$, corresponds to a pair $(u, v)$ as in (\ref{equation:Mum-corr}), with $\deg u \le 
+g$. This pair is called the \textbf{Mumford Representation} of $D$.
+
+
+
+
+
+
+
+
+
+\section{Addition on the jacobian $J(\mathcal{H})$}
+\label{section:add-jac}
+
+Assume the elements of $J(\mathcal{H})$, i.e the reduced divisors, are given by their Mumford 
+representations. In this section, we present an algorithm due to Cantor \cite{Cantor1987} for 
+addition on $J(\mathcal{H})$ based on the Mumford representation. Let us first see how to obtain the 
+reduced divisor corresponding to a given semi-reduced divisor.
+\begin{algorithm}
+[Reduction of semi-reduced divisors]
+\label{algorithm:semi-d-redu}
+\begin{algorithmic}[1]
+\REQUIRE A pair $(u, v)$ representing a semi-reduced divisor $D$.
+\ENSURE  A pair representing the reduced divisor $D_1 \equiv D \pmod {\mathbf{P}}$.
+\WHILE {$\deg(u) > g$}
+	\STATE 
+	\label{step:redu-div-u_1}
+	$u_1 \leftarrow (v^2 - f) / u$
+	\STATE
+	\label{step:redu-v-redu}
+	$v_1 \leftarrow -v \mod u_1$
+	\STATE
+	\label{step:redu-u-monic}
+	make $u_1$ monic by dividing it by its leading coefficient.
+	\STATE $u \leftarrow u_1$, $v \leftarrow v_1$.
+\ENDWHILE
+\RETURN $(u, v)$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}
+\refalgorithm{algorithm:semi-d-redu} works correctly.
+\end{theorem}
+\begin{proof}
+We first show that the terminates. Assume $\deg u \ge g + 1$. Then $\deg(v^2 - f) \le \max(\deg v^2, 
+\deg f) < \max(\deg u^2, \deg u^2) = 2\deg u$. Thus, $\deg u_1 = \deg(v^2 - f) - \deg u < 2\deg u - 
+\deg u = \deg u$. Therefore, the degree of $u$ decreases strictly by each iteration, hence the while 
+loop iterates finitely many times. \\
+Let $D_1 = \gcd(\divisor(u_1), \divisor(v_1 - y))$ where $u_1, v_1$ are as in steps 
+\ref{step:redu-div-u_1} and \ref{step:redu-v-redu} of the algorithm repectively. Then $u_1$ is 
+monic, and $\deg v_1 < \deg u_1$ by steps \ref{step:redu-v-redu} and \ref{step:redu-u-monic}. Also 
+$v_1^2 - f \equiv v^2 - f \equiv 0 \pmod {u_1}$. Therefore, $D_1$ is semi-reduced by 
+\reftheorem{theorem:mum-rep}. \\
+For a divisor $D = \sum_{P \in \mathcal{P}}n_PP$, let $\widetilde{D} = \sum_{P \in \mathcal{P}} 
+n_P\tilde{P}$. Then $\divisor(u) = D + \widetilde{D}$. By \refproposition{proposition:always-semi}, 
+$\divisor(v - y) = D + K$, and $\divisor(v + y) = \widetilde{D} + \widetilde{K}$, where $K = \sum_{i 
+= 1}^\ell k_i(P_i - \infty)$, for some $P_i \in \mathcal{H}$, and $k_i \ge 0$. Thus, $\divisor(u_1) 
+= \divisor((v^2 - f) / u)) = \divisor(v^2 - f) - \divisor(u) = D + K + \widetilde{D} + \widetilde{K} 
+- D - \widetilde{D} = K + \widetilde{K}$. Since $\divisor(v + y)$ is semi-reduced, 
+$\supp\{\widetilde{D} \backslash \infty \} \cap \supp\{K \backslash \infty \} = \varnothing$, which 
+implies that $\gcd(\divisor(u_1), \divisor(v + y)) = \widetilde{K}$ hence $D_1 = \gcd(\divisor(u_1), 
+\divisor(v_1 + y)) = \widetilde{K}$. On the other hand, $D - D_1 = D - \widetilde{K} = \divisor(v - 
+y) - K - \divisor(u_1) + K = \divisor(v - y) - \divisor(u_1)$ which means that $D_1 \equiv D \pmod 
+{\mathbf{P}}$.
+\end{proof}
+
+\begin{algorithm}
+[Cantor's algorithm for adding reduced divisors]
+\label{algorithm:Cantor-add}
+\begin{algorithmic}[1]
+\REQUIRE Pairs $(u_1, v_1)$, $(u_2, v_2)$ representing reduced divisors $D_1$, and $D_2$ 
+respectively.
+\ENSURE  A pair $(u, v)$ representing the reduced divisor $D \equiv D_1 + D_2 \pmod {\mathbf{P}}$.
+\STATE compute $d_1, r_1, r_2$ such that $d_1 = \gcd(u_1, u_2)$, and $d_1 = r_1u_1 + r_2u_2$ using 
+the extended Euclidean algorithm.
+\STATE compute $d, s_1, s_2$ such that $d = \gcd(d_1, v_1 + v_2)$, and $d = s_1d_1 + s_2(v_1 + v_2)$ 
+using the extended Euclidean algorithm.
+\STATE let $g_1 = s_1r_1$, $g_2 = s_2r_2$, and $g_3 = s_2$ so that $d = g_1u_1 + g_2u_2 + g_3(v_1 + 
+v_2)$.
+\STATE $u \leftarrow u_1u_2 / d^2$.
+\STATE $v \leftarrow (u_1v_2g_1 + u_2v_1g_2 + (v_1v_2 + f)g_3) / d \mod u$
+\STATE use \refalgorithm{algorithm:semi-d-redu} to reduce $(u, v)$
+\RETURN $(u, v)$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}
+\refalgorithm{algorithm:Cantor-add} works correctly.
+\end{theorem}
+\begin{proof}
+The algorithm first generates a pair $(u, v)$ representing a semi-reduced divisor $D \equiv D_1 + 
+D_2 \pmod {\mathbf{P}}$, and then uses \refalgorithm{algorithm:semi-d-redu} to obtain the desired 
+reduced divisor. Here, we omit the lengthy proof, and refer the reader to \cite[ch. 
+13]{Washington2008} or \cite[appendix]{Koblitz1998}.
+\end{proof}
+
+
+
+
+
+
+
+
+
+\section{Hyperelliptic curves over $\vmathbb{F}_q$}
+\label{section:hyper-ff}
+
+In this section we assume the hyperelliptic curve $\mathcal{H}$, \refequation{equation:hyper-not2}, 
+is defined over the finite field $k = \vmathbb{F}_q$ where $q = p^n$ with $p \ge 3$ prime. Let 
+$\phi_q$ be the $q$-th power Frobenius map on $\mathcal{H}$. For a divisor $\sum_{P \in \mathcal{H}} 
+n_PP$, we define $\phi_q(D) = \sum_{P \in \mathcal{H}}n_P\phi_q(P)$. Also for a rational function $g 
+\in \overline{\vmathbb{F}_q}(\mathcal{H})$, let $g^{\phi_q}$ be $g$ with $\phi_q$ applied to its 
+coefficients. A divisor $D$ is said to be defined over $\vmathbb{F}_q$ if $\phi_q(D) = D$. 
+Consequently, a divisor class $D \in J(\mathcal{H})$ is defined over $\vmathbb{F}_q$ if $\phi_q(D) 
+\equiv D \pmod {\mathbf{P}}$. We denote by $J_{\vmathbb{F}_q}(\mathcal{H})$, the elements of 
+$J(\mathcal{H})$ defined over $\vmathbb{F}_q$. The following is a consequence of 
+\reftheorem{theorem:mum-rep} for the restriction $\vmathbb{F}_q$ of $k = \overline{\vmathbb{F}_q}$.
+\begin{proposition}
+Let $\mathcal{P}_{\vmathbb{F}_q}$ be the set of pairs of of polynomials $(u, v) \in \vmathbb{F}_q[x] 
+\times \vmathbb{F}_q[x]$ such that \emph{(\romnum{1})} $u$ is monic, and $\deg v < \deg u \le g$ 
+\emph{(\romnum{2})} $u \mid v^2 - f$. Then the following mapping is a bijection.
+\begin{equation}
+\label{equation:Mum-corr-fq}
+\setlength\arraycolsep{2pt}
+\begin{array}{llll}
+\psi_{\vmathbb{F}_q}: & \mathcal{P}_{\vmathbb{F}_q} & \longrightarrow & J_{\vmathbb{F}_q}(\mathcal{H}) 
+\\
+& (u, v) & \longmapsto & \gcd(\divisor(u), \divisor(v - y))
+\end{array}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Let $D \in J_{\vmathbb{F}_q}(\mathcal{H})$, and let $E$ be the unique reduced divisor in the class of 
+$D$. Then $D - E = \divisor(g)$ for some function $g$, and hence $\phi_q(D)- \phi_q(E) = 
+\divisor(\phi_q(F))$, which implies that $\phi_q(E)$ is in the class of $\phi_q(D)$. By uniqueness, 
+$E = \phi_q(E)$. Let $(u, v)$ be the Mumford representation of $E$. Then $(u^{\phi_q}, v^{\phi_q})$ 
+is the Mumford representation of $\phi_q(E)$, hence $(u, v) = (u^{\phi_q}, v^{\phi_q})$. Therefore, 
+$u, v \in \vmathbb{F}_q[x]$. Conversely, let $u, v \in \vmathbb{F}_q$, and let $D = 
+\psi_{\vmathbb{F}_q}(u, v)$. Then 
+\begin{align*}
+\phi_q(D) 
+&= \phi_q(\gcd(\divisor(u), \divisor(v - y))) = \gcd(\phi_q(\divisor(u)), \phi_q(\divisor(v - y))) 
+\\
+&= \gcd(\divisor(\phi_q(u)), \divisor(\phi_q(v - y))) = \gcd(\divisor(u), \divisor(v - y)) = D 
+\qedhere
+\end{align*}
+\end{proof}
+Since there are finitely many polynomials in $\vmathbb{F}_q[x]$ of degree less than or equal to $g$, 
+$J_{\vmathbb{F}_q}(\mathcal{H})$ is a finite set. It is clear that $J_{\vmathbb{F}_q}(\mathcal{H})$ is 
+closed under addition and inversion, hence it is a group. As in the case of elliptic curves, 
+$\phi_q$ is an inseparable endomorphism of $J(\mathcal{H})$ of degree $q^g$. We have 
+$J_{\vmathbb{F}_q}(\mathcal{H}) = \ker(\phi_q - 1)$, and hence $\#J_{\vmathbb{F}_q}(\mathcal{H}) = 
+\#\ker(\phi_q - 1) = \deg(\phi - 1)$. Denote by $\chi_q(t)$ the characteristic polynomial of 
+$\phi_q$. It can be shown that $\chi_q(t) \in \vmathbb{Z}[t]$ is monic of degree $2g$, and that 
+$\deg(\phi_q - 1) = \chi_q(1)$. For an integer $n$ prime to $p$, the restriction 
+$\phi_q\vert_{J(\mathcal{H})[n]}$ has the characteristic polynomial $\chi_q(t) \pmod n$; see 
+\cite[ch. 4, 5]{Cohen2006} or \cite{Mumford1974}.
+
+Let $N_k$ denote the number of $\vmathbb{F}_{q^k}$-rational points of $\mathcal{H}$. Define the 
+generating function
+\begin{equation}
+\label{equation:zeta}
+Z(\mathcal{H}, t) = \exp\left( \sum_{k = 1}^\infty \frac{N_k}{k}t^k \right)
+\end{equation}
+which is called the \textbf{zeta function} of $\mathcal{H}$ over $\vmathbb{F}_q$. The function 
+$Z(\mathcal{H}, t)$ is of fundamental importance in the theory of hyperelliptic curves over finite 
+fields. The following theorem states some known properties of this function.
+\begin{theorem}[\textbf{Weil Conjectures}]
+\label{theorem:Weil-conj}
+Let $\mathcal{H}$ be a hyperelliptic curve of genus $g$ over $\vmathbb{F}_q$, and $Z(\mathcal{H}, t)$ 
+be the zeta function of $\mathcal{H}$.
+\begin{enumerate}
+\item 
+$Z(\mathcal{H}, t) \in \vmathbb{Q}[[t]]$ is a rational function.
+\item
+\label{item:zeta-func-equ}
+$Z(\mathcal{H}, t)$ satisfies the functional equation 
+$$
+Z\left( \mathcal{H}, \frac{1}{qt} \right) = q^{1 - g}t^{2 - 2g}Z(\mathcal{H}, t)
+$$
+\item
+\label{item:zeta-frac}
+We have
+\begin{equation}
+\label{equation:zeta2}
+Z(\mathcal{H}, t) = \frac{L(t)}{(1 - t)(1 - qt)}
+\end{equation}
+where $L(t) \in \vmathbb{Z}[t]$ is of degree $2g$ such that $L(t) = \prod_{i = 1}^{2g} (1 - 
+\alpha_it)$ where $\alpha_i$ are algebraic integers such that $\alpha_{g + i} = \overline{\alpha}_i$ 
+and $\abs{\alpha_i} = \sqrt{q}$ for $i = 1, \dots, g$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+See \cite[ch. 5]{Stichtenoth2009} or \cite[part \Romnum{2}]{vanderGeer1988}.
+\end{proof}
+\begin{corollary}
+\label{corollary:Lfunct-form}
+$L(t)$ is of the form $L(t) = a_0 + a_1t + \cdots + a_{2g}t^{2g}$ where $a_0 = 1, a_{2g} = q^g$, and 
+$a_{2g - i} = q^{g - i}a_i$ for $i = 0, \dots, g$.
+\end{corollary}
+\begin{proof}
+The functional equation of $Z(\mathcal{H}, t)$, 
+\reftheorem{theorem:Weil-conj}.(\ref{item:zeta-func-equ}), gives 
+$$
+L(t) = q^gt^{2g}L\left( \frac{1}{qt} \right) = \frac{a_{2g}}{q^g} + \frac{a_{2g - 1}}{q^{g - 1}}t + 
+\cdots + q^ga_0t^{2g}
+$$
+and by \reftheorem{theorem:Weil-conj}.(\ref{item:zeta-frac}), $a_0 = 1$.
+\end{proof}
+\begin{corollary}
+\label{corollary:num-point-H}
+Let $\alpha_i$, $i = 1, \dots, 2g$ be as in \reftheorem{theorem:Weil-conj}.(\ref{item:zeta-frac}). 
+Then $\#\mathcal{H}(\vmathbb{F}_{q^n}) = q^n + 1 - \sum_{i = 1}^{2g} \alpha_i^n$.
+\end{corollary}
+\begin{proof}
+Taking the logarithm of both sides of (\ref{equation:zeta2}), gives 
+\begin{align*}
+\ln(Z(\mathcal{H}, t)) 
+&= \sum_{i = 1}^{2g} \ln(1 - \alpha_it) - \ln(1 - t) - \ln(1 - qt) \\
+&= -\sum_{i = 1}^{2g} \sum_{k = 1}^\infty \frac{\alpha_i^kt^k}{k} + \sum_{k = 1}^\infty 
+\frac{t^k}{k} + \sum_{k = 1}^\infty \frac{q^kt^k}{k} \\
+&= \sum_{k = 1}^\infty \frac{1}{k}(q^k + 1 - \sum_{i = 1}^{2g} \alpha_i^k)t^k
+\end{align*}
+Comparing this to (\ref{equation:zeta}) yields the result.
+\end{proof}
+It can be shown that $\chi_q(t) = t^{2g}L(1 / t)$. Therefore, when $g = 1$, 
+\refcorollary{corollary:num-point-H} gives \reftheorem{theorem:Weil-subfc}. By 
+\refcorollary{corollary:Lfunct-form},
+\begin{equation}
+\label{equation:Frob-charpoly}
+\chi_q(t) = t^{2g} + a_1t^{2g - 1} + \cdots + a_{g - 1}t^{g - 1} + a_gt^g + a_{g - 1}qt^{g - 1} + 
+\cdots + a_2q^{g - 2}t^2 + a_1q^{q - 1}t + q^g 
+\end{equation}
+In particular $\chi_q(t) = \prod_{i = 1}^{2g} (t - \alpha_i)$ which means that the eigenvalues of 
+$\phi_q$ are $\alpha_i$, $i = 1, \dots, 2g$. Therefore, the eigenvalues of $\phi_{q^k} = \phi_q^k$ 
+are $\alpha_i^k$, $i = 1, \dots, 2g$. Hence $\chi_{q^k}(t) = \prod_{i = 1}^{2g} (t - \alpha_i^k)$. 
+As mentioned earlier, $\#J_{\vmathbb{F}_q}(\mathcal{H}) = \chi_q(1)$, consequently, 
+\begin{equation}
+\label{equation:num-point-J}
+\#J_{\vmathbb{F}_{q^k}}(\mathcal{H}) = \chi_{q^k}(1) = \prod_{i = 1}^{2g} (1 - \alpha_i^k)
+\end{equation}
+\begin{theorem}[\textbf{Weil bounds}]
+Let $\mathcal{H}$ be a hyperelliptic curve of genus $g$ over $\vmathbb{F}_q$. Then
+$$
+\renewcommand{\arraystretch}{1.25}
+\begin{array}{c}
+\abs{\#\mathcal{H}(\vmathbb{F}_{q^n}) - (q^n + 1)} \le 2g\sqrt{q^n} \:, \\
+(\sqrt{q^n} - 1)^{2g} \le \#J_{\vmathbb{F}_{q^n}}(\mathcal{H}) \le (\sqrt{q^n} + 1)^{2g}
+\end{array}
+$$
+\end{theorem}
+\begin{proof}
+By \refcorollary{corollary:num-point-H} and \reftheorem{theorem:Weil-conj}.(\ref{item:zeta-frac}), 
+$$
+\abs{\#\mathcal{H}(\vmathbb{F}_{q^n}) - (q^n + 1)} = \abs{\sum_{i = 1}^{2g} \alpha_i^n} \le \sum_{i = 
+1}^{2g} \abs{\alpha_i^n} = \sum_{i = 1}^{2g} \abs{\alpha_i}^n = 2g\sqrt{q^n}
+$$
+which proves the first part. For the second part, by (\ref{equation:num-point-J}) and 
+\reftheorem{theorem:Weil-conj}.(\ref{item:zeta-frac}),
+$$
+\#J_{\vmathbb{F}_{q^k}}(\mathcal{H}) = \abs{\prod_{i = 1}^{2g} (1 - \alpha_i^k)} = \prod_{i = 1}^{2g} 
+\abs{(1 - \alpha_i^k)} \le \prod_{i = 1}^{2g} (1 + \abs{\alpha_i^k}) = (\sqrt{q^n} + 1)^{2g}
+$$
+which establishes the upper bound. The lower bound is established the same way. 
+\end{proof}

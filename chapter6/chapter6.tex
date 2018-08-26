@@ -1,0 +1,343 @@
+
+\chapter{Point Counting on Genus 2 Curves}
+
+By counting points on a genus 2 curve over a finite field we mean computing the order of its 
+jacobian. For cryptographic purposes, the order of the jacobian should be a non-smooth number. A 
+curve is called a secure curve if it is also defined over a large enough base field. In this 
+chapter, as mentioned in \refchapter{chapter:intro}, we present a generalization of the genus 1 
+Schoof algorithm for point counting on genus 2 curves. We first present a general picture of the 
+work of Gaudry and Schost, without going into details, we refer the reader to the original reference 
+\cite{GASC2010} for great detail. Then we report the practical improvements on their work by 
+applying the contributions presented in previous chapters.
+
+
+
+
+
+
+
+
+
+\section{Preliminaries}
+\label{section:genus2-pre}
+
+Let $p > 2$ be a fixed prime and let $\vmathbb{F}_p$ be a finite field of $p$ elements. A 
+hyperelliptic curve of genus 2 over $\vmathbb{F}_p$ is a curve $\mathcal{H}$ defined by 
+\refequation{equation:hyper-not2} by setting $g = 2$. Let simply denote 
+$J_{\vmathbb{F}_{p}}(\mathcal{H})$ by $J(\mathcal{H})$ in this chapter. For a divisor $D \in 
+J(\mathcal{H})$ with Mumford representation $(u, v)$, the \textit{weight} of $D$ is defined to be 
+the degree of $u$. Let $\Theta$ denote the set of divisors of weight smaller than $2$. Then the 
+representation of an element $D \in J(\mathcal{H}) \backslash \Theta$ is of the form $(x^2 + u_1x + 
+u_0, v_1x + v_0)$. By \refequation{equation:Frob-charpoly}, the characteristic polynomial of the 
+Frobenius endomorphism $\phi_p$ of $J(\mathcal{H})$ is $\chi_p(t) = t^{4} - a_1t^{3} + a_2t^2 - 
+a_1pt + p^2$ with $a_1 = \alpha_1 + \alpha_2 + \alpha_3 + \alpha_4$, and $a_2 = \alpha_1\alpha_2 + 
+\alpha_1\alpha_3 +\cdots + \alpha_3\alpha_4$ where $\alpha_i$ are as in 
+\reftheorem{theorem:Weil-conj}.(\ref{item:zeta-frac}). Therefore, $\abs{a_1} \le 4\sqrt{p}$, and 
+$\abs{a_2} \le 6p$. Also by \refequation{equation:num-point-J}, $\#J(\mathcal{H}) = \chi_p(1) = p^2 
++ 1 - a_1(p + 1) + a_2$. For a positive integer  $\ell$ prime to $p$, the $\ell$-torsion subgroup 
+$J(\mathcal{H})[\ell]$ is isomorphic to $(\vmathbb{Z} / \ell\vmathbb{Z})^4$. Since $\chi_p(D) = 0$ for 
+all $D \in J(\mathcal{H})$, we have
+\begin{equation}
+\label{equation:Frob-genus2}
+\phi_p^{4}(D) - [a_1 \text{ mod } \ell]\phi_p^{3}(D) + [a_2 \text{ mod } \ell]\phi_p^2(D) - [a_1p 
+\text{ mod } \ell]\phi_p(D) + [p^2 \text{ mod } \ell]D = 0
+\end{equation}
+for all $D \in J(\mathcal{H})[\ell]$. According to a result of \cite{Kampkotter1991}, for any odd 
+prime power $\ell$, $J(\mathcal{H}) \backslash \Theta$ contains a $\vmathbb{Z} / 
+\ell\vmathbb{Z}$-basis of $J(\mathcal{H})[\ell]$. Hence, $\phi_p \vert_{J(\mathcal{H})[\ell]}$ is 
+completely determined by its action on $J(\mathcal{H})[\ell] \backslash \Theta$. The goal is to 
+imitate the elliptic version of the Schoof's algorithm by computing $\chi_p(t) \mod \ell$ for small 
+primes or prime powers $\ell$, and then recombine the results using Chinese remaindering theorem to 
+get $\chi_p(t)$. By the above, we can always assume that $D$ is a divisor of weight $2$.
+
+
+
+
+
+
+
+
+
+
+\section{Representing $\ell$-torsion divisors}
+\label{section:l-tor-rep}
+
+Let $\ell$ be a prime or prime power such that $\gcd(\ell, p) = 1$. In the case of elliptic curves, 
+i.e. curves of genus 1, a divisor $D$, which is a indeed a point on the curve, is an $\ell$-torsion 
+divisor if and only if $\psi_\ell(D) = 0$ where $\psi_\ell$ is the $\ell$-th division polynomial. 
+Therefore, an $\ell$-torsion divisor can be obtained by extracting a root of $\psi_\ell$. A similar 
+situation holds for genus 2 curves. Let $D$ be a divisor of weight $2$ given by $(x^2 + u_1x + u_0, 
+v_1x + v_0)$. Then there exist a radical ideal $I_\ell \subset \vmathbb{F}_p[U_1, U_0, V_1, V_0]$ 
+such that $D \in J(\mathcal{H})[\ell]$ if and only if $s(u_1, u_0, v_1, v_0) = 0$ for all $s \in 
+I_\ell$. The ideal $I_\ell$ is called the $\ell$-\emph{th division ideal}. See \cite{Kampkotter1991} 
+for an explicit set of generators for $I_\ell$.
+
+It can be shown that the Gr\"{o}bner basis of the ideal $I_\ell$ has the form
+$$
+I_\ell \left|
+\setlength\arraycolsep{2pt}
+\begin{array}{lll}
+V_0 & - & V_1Z(U_1) \\
+V_1^2 & - & W(U_1) \\
+U_0 & - & S(U_1) \\
+&& R(U_1) 
+\end{array}
+\right.
+$$
+where $R \in \vmathbb{F}_p[U_1]$ is a squarefree monic polynomial of degree $(\ell^4 - 1) / 2$, and 
+$Z, W, S \in \vmathbb{F}_p[U_1]$ are polynomials of degree less than $(\ell^4 - 1) / 2$. Therefore, 
+we can use a hyperelliptic analogous of the Schoof's algorithm by working in the quotient algebra 
+$\vmathbb{F}_p[U_1, U_0, V_1, V_0] / I_\ell$. This algorithm has polynomial time. But since there is 
+no computationally efficient recurrence relations, like for division polynomials of elliptic curves, 
+for the Gr\"{o}bner bases of the division ideals, the algorithm requires computation of Gr\"{o}bner 
+bases, which is time consuming in practice. A more efficient approach is to use Cantor's division 
+polynomials. Let $P = (x - x_P, y_P)$ be a divisor of weight 1. Then there are polynomials $d_0, 
+d_1, d_2, e_0, e_1, e_2 \in \vmathbb{F}_p[X]$, depending on $\ell$, such that
+\begin{equation}
+\label{equation:Cantor-divpoly}
+[\ell]P = \left( x^2 + \frac{d_1(x_P)}{d_0(x_P)}x + \frac{d_2(x_P)}{d_0(x_P)}, 
+y_P\frac{e_1(x_P)}{e_0(x_P)}x + y_P\frac{e_2(x_P)}{e_0(x_P)}\right).
+\end{equation}
+For $\ell$ odd, the degrees of the above polynomials are $2\ell^2 - 1, 2\ell^2 - 2, 2\ell^2 - 3, 
+3\ell^2 - 2, 3\ell^2 - 2$, and $3\ell^2 - 3$ respectively, and for $\ell$ even, these degrees are 
+reduced by $5$. These division polynomials can be easily computed using recurrence relations. Now, 
+let $D = (x^2 + U_1x + U_0, V_1x + V_0) = (u, v) \in J(\mathcal{H})[\ell] \backslash \Theta$ be a 
+generic divisor. Then we can write $D = P_1 + P_2$ where $P_1 = (x - X_1, Y_1)$, and $P_2 = (x - 
+X_2, Y_2)$ such that $X_1, X_2$ are roots of $u$, and $Y_i = v(X_i), i = 1, 2$. Therefore, $[\ell]D 
+= 0$ if and only if $[\ell]P_1 = -[\ell]P_2$. Rewriting this equation using 
+(\ref{equation:Cantor-divpoly}) results in the following system of equations
+$$
+\mathbf{E} \left|
+\setlength\arraycolsep{2pt}
+\begin{array}{lllll}
+E_1(X_1, X_2) & = & (d_1(X_1)d_2(X_2) - d_1(X_2)d_2(X_1) / (X_1 - X_2) & = & 0, \\
+E_2(X_1, X_2) & = & (d_0(X_1)d_2(X_2) - d_0(X_2)d_2(X_1) / (X_1 - X_2) & = & 0, \\
+F_1(X_1, X_2, Y_1, Y_2) & = & Y_1e_1(X_1)e_0(X_2) + Y_2e_1(X_2)e_0(X_1) & = & 0, \\
+F_2(X_1, X_2, Y_1, Y_2) & = & Y_1e_2(X_1)e_0(X_2) + Y_2e_2(X_2)e_0(X_1) & = & 0, \\
+\end{array}
+\right.
+$$
+which encodes the $\ell$-torsion divisors in $J(\mathcal{H})[\ell] \backslash \Theta$. It can be 
+shown that the division ideal $I_\ell$ can be reconstructed from the system $\mathbf{E}$.
+
+
+
+
+
+
+
+
+
+
+\section{A Schoof algorithm for genus 2}
+
+Assume we have the $\ell$-th division ideal reconstructed from the system $\mathbf{E}$ of 
+\refsection{section:l-tor-rep}. Then we can extract a root $r$ of $R(U_1)$ and obtain the 
+coordinates of a weight $2$ divisor $D$ by substituting $r$ into equations of $\mathbf{E}$ or 
+$I_\ell$. The divisor $D$ can then be plugged into the characteristic polynomial $\chi_p(t)$ for 
+computing $a_1 \text{ mod } \ell$, and $a_2 \text{ mod } \ell$. With this descriptions, the sketch 
+of a genus $2$ Schoof algorithm is the following.
+
+\begin{algorithm}
+[A genus $2$ Schoof algorithm]
+\label{algorithm:genus2-Schoof}
+\begin{algorithmic}[1]
+\REQUIRE A genus $2$ hyperelliptic curve $\mathcal{H}$ over $\vmathbb{F}_p$
+\ENSURE  The number $\#J(\mathcal{H})$
+\STATE $\mathcal{A} \leftarrow \varnothing$
+\FOR {enough number of small primes or prime powers $\ell$}
+	\STATE Let $L = \{ (a_1, a_2); \: a_1, a_2 \in [0, \ell - 1]\}$
+	\WHILE {$\#L > 1$}
+		\STATE construct a new $\ell$-torsion divisor $D$
+		\STATE eliminate the pairs $(a_1, a_2)$ in $L$ such that \\
+		\begin{center}
+		 $\phi_p^{4}(D) - [a_1]\phi_p^{3}(D) + [a_2]\phi_p^2(D) - [a_1p \text{ mod } \ell]\phi_p(D) 
++ [p^2 \text{ mod } \ell]D \ne 0$
+		\end{center}
+	\ENDWHILE
+	\STATE use the elements of $L$ to deduce $\chi_p(t) \text{ mod } \ell$
+	\STATE $\mathcal{A} \leftarrow \mathcal{A} \cup \{ (\chi_p(t) \text{ mod } \ell, \ell) \}$
+\ENDFOR
+\STATE deduce $\chi_p(t)$ from the elements of $\mathcal{A}$ by Chinese remaindering
+\RETURN $\chi_p(1)$
+\end{algorithmic}
+\end{algorithm}
+
+An efficient way of extracting a root of $R(U_1)$ is to extract an irreducible factor of it, and 
+then construct an extension $\vmathbb{F}_q$ of $\vmathbb{F}_p$ using this factor. Since factoring is 
+rather time consuming, when $\ell$ is prime, we may avoid factoring $R(U_1)$ as follows. Define the 
+quotient algebra 
+$$
+\vmathbb{D} = \vmathbb{F}_p[U_1, U_0, V_1, V_0] / \langle V_0 - V_1Z(U_1), V_1^2 - W(U_1), U_0 - 
+S(U_1), R(U_1) \rangle
+$$
+Then we may define divisors with coordinates in $\vmathbb{D}$, although it may not a field. In 
+particular, we let $D_\ell = (x^2 + U_1x + U_0, V_1x + V_0) = (x^2 + U_1x + S(U_1), V_1x + V_0)$. We 
+can also use the standard addition formulae to add such divisor. Since $\vmathbb{D}$ may contain zero 
+divisors, and the addition law of the jacobian involves inversions, we may encounter a division by 
+zero. In that case, we can instead factor $R(U_1)$, and work modulo all factors separately. 
+Computing $\phi_p^i(D_\ell)$ for a positive integer $i$ is also straightforward. Now, since 
+\refequation{equation:Frob-genus2} holds for all $D \in J(\mathcal{H})[\ell]$, we have the equality
+$$
+\phi_p^{4}(D_\ell) - [a_1 \text{ mod } \ell]\phi_p^{3}(D_\ell) + [a_2 \text{ mod } 
+\ell]\phi_p^2(D_\ell) - [a_1p \text{ mod } \ell]\phi_p(D_\ell) + [p^2 \text{ mod } \ell]D_\ell = 0
+$$
+over $\vmathbb{D}$. Therefore, to find the pairs $(a_1, a_2) \in [0, \ell - 1]^2$ satisfying this 
+relation, we can proceed as in \refalgorithm{algorithm:genus2-Schoof}. 
+
+
+
+
+
+
+
+
+
+
+
+\section{Lifting $\ell^k$-torsion divisors}
+\label{section:lift-ell-tors}
+
+Let $\ell$ be a prime different from $p$. Since the $[\ell]: J(\mathcal{H}) \rightarrow 
+J(\mathcal{H})$ is surjective, for any $D \in J(\mathcal{H})$, there is a divisor $D_1 \in 
+J(\mathcal{H})$ such that $[\ell]D_1 = D$. This is a division by $\ell$ in the jacobian. In the 
+following, we show how to obtain a sequence of $\ell^k$-torsion divisors $P_k$, such that 
+$[\ell]P_{k + 1} = P_k$, and $P_1 \in J(\mathcal{H})[\ell]$. For $k = 1$, an $\ell$-torsion divisor 
+$P_1$ is obtained by factoring the polynomial $R$ in the Gr\"{o}bner basis of the division ideal 
+$I_\ell$ (see \refsection{section:l-tor-rep}). Now, assume we have computed an $\ell^k$-torsion 
+divisor $P_k = (x^2 + u_1x + u_0, v_1x + v_0)$. Suppose that $P_{k + 1} = (x^2 + U_1x + U_0, V_1x + 
+V_0)$ such that $[\ell]P_{k + 1} = P_k$. Using the addition law on the jacobian, this equality 
+yields the system of equations
+$$
+\mathcal{F}_k \left|
+\setlength\arraycolsep{2pt}
+\begin{array}{l}
+H_1(U_1, U_0, V_1, V_0) = u_1, \\
+H_2(U_1, U_0, V_1, V_0) = u_0, \\
+H_3(U_1, U_0, V_1, V_0) = v_1, \\
+H_4(U_1, U_0, V_1, V_0) = v_0, \\
+\end{array}
+\right.
+$$
+where $H_i$ are rational functions. Clearing the denominators results in a system of polynomial 
+equations $\mathcal{P}_k$ in four variables $U_1, U_0, V_1, V_0$. We may assume that the ideal 
+$\langle \mathcal{P}_k \rangle$ admits a Gr\"{o}bner basis of the form
+$$
+\mathcal{P}_k \left|
+\setlength\arraycolsep{2pt}
+\begin{array}{lll}
+V_0 & - & G_1(U_1) \\
+V_1 & - & G_2(U_1) \\
+U_0 & - & G_3(U_1) \\
+&& M(U_1) 
+\end{array}
+\right.
+$$
+Let $\vmathbb{F}_q$ be the field of definition of $P_k$, and let $e_k$ be the degree of the extension 
+$\vmathbb{F}_q / \vmathbb{F}_p$. Let $F \in \vmathbb{F}_p[T]$ be a monic irreducible polynomial of 
+degree $e_k$ so that $\vmathbb{F}_q \cong \vmathbb{F}_p[T] / F$. Then $u_1, u_0, v_1, v_0$ are 
+expressed as polynomials in $\vmathbb{F}_p[T]$ of degree less than $e_k$, and hence $P_{k + 1}$ is 
+described by a system of the form
+$$
+K_{\ell^k} \left|
+\setlength\arraycolsep{2pt}
+\begin{array}{cll}
+V_0 & = & Z(T) \\
+V_1 & = & W(T) \\
+U_0 & = & S(T) \\
+U_1 & = & R(T) \\
+F(T) & = & 0
+\end{array}
+\right.
+$$
+where $Z, W, S, R \in \vmathbb{F}_p[T]$. At each step of computing the sequence $P_1, P_2, \dots$, we 
+can use $P_{i}$ to obtain modular information on the polynomial $\chi_p(t)$ modulo $\ell^i$ as in 
+\refalgorithm{algorithm:genus2-Schoof}.
+
+
+
+
+
+
+
+
+
+\section{Experimental results}
+
+In this section, we compare timings for lifting $2^k$-torsion divisors. For the case of $\ell = 2$, 
+it is more efficient to work on the Kummer surface associated to the curve than the jacobian. The 
+Kummer surface $\mathcal{K} \in \vmathbb{P}^3$ is the quotient of the jacobian $J(\mathcal{H})$ by 
+the hypereliptic involution. More precisely, there is a surjective mapping $\varphi: J(\mathcal{H}) 
+\rightarrow \mathcal{K}$ where $\varphi^{-1}(\kappa)$ is a set of two opposite divisors for every 
+$\kappa \in \mathcal{K}$. Because of the simple doubling formulae, division by $2$ in $\mathcal{K}$ 
+is done efficiently by taking four square roots and doing a few multiplications or divisions. 
+Therefore, for halving an element $P \in J(\mathcal{H})$, we can halve $\kappa = \varphi(P)$ in 
+$\mathcal{K}$, and then compute $\varphi^{-1}(\kappa)$ which can be done rather efficiently 
+\cite{Gaudry2007}. 
+
+Table \ref{table:2-tor-timings} compares the timings (in seconds) obtained for lifting $2^k$-torsion 
+for the sample curve 
+\[
+\begin{array}{rcl}
+y^2 &=& 
+x^5 + 168757993785992721416148486985004362096\, x^4 \\
+&& + 22694776835380974819448515025325210463\, x^3 \\
+&& + 77741235738513704233876669606862675128\, x^2 \\
+&& + 150617856041609651434793310038133555411\, x\\
+&& + 143282909778412049875859459912573485378.
+\end{array}
+\]
+over $\vmathbb{F}_p$ with $p = 2^{127} - 1 = \seqsplit{170141183460469231731687303715884105727}$. The 
+degree $e_k$ is the degree of the field extension defined in \refsection{section:lift-ell-tors}. 
+There are two main rows: the first one gives the timings for computing all required square roots, 
+and the second row gives the timing for computing the Frobenius and searching for the pair $(a_1, 
+a_2)$ as in \refalgorithm{algorithm:genus2-Schoof}. For a more precise profiling, each of the two 
+main rows is divided into three subrows labelled with \Romnum{1}, \Romnum{2}, and \Romnum{3}: 
+\Romnum{1} denotes the original Guadry and Schost implementation; \Romnum{2} denotes the same 
+implementation but with the new NTL containing the new modular composition and power projection 
+(\refsection{section:MMapll}); \Romnum{3} is the same as \Romnum{2} except that the new square root 
+algorithm (\refsection{section:squareroot}) has been used.
+\begin{center}
+\renewcommand{\multirowsetup}{\centering}
+\renewcommand{\tabcolsep}{1.7mm}
+% preventing the expont to touch the top of the cell
+\newlength{\lengthofcell}
+\newcommand{\pboxc}[1]{
+\settowidth{\lengthofcell}{#1}
+\parbox{\lengthofcell}{#1}}
+%------------------------------------
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c||c|c|c|c|c|c|c|c|c|c|c|c}
+\multicolumn{2}{c||}{index $2^k$} & \pboxc{$2^{6}$} & \pboxc{$2^{7}$} & \pboxc{$2^{8}$} & 
+\pboxc{$2^{9}$} & \pboxc{$2^{10}$} & \pboxc{$2^{11}$} & \pboxc{$2^{12}$} & \pboxc{$2^{13}$} & 
+\pboxc{$2^{14}$} & \pboxc{$2^{15}$} & \pboxc{$2^{16}$} & \pboxc{$2^{17}$} \\
+\hline\hline
+\multicolumn{2}{c||}{degree $e_k$} & \pboxc{$2^{5}$} & \pboxc{$2^{6}$} & \pboxc{$2^{7}$} & 
+\pboxc{$2^{8}$} & \pboxc{$2^{9}$} & \pboxc{$2^{10}$} & \pboxc{$2^{11}$} & \pboxc{$2^{12}$} & 
+\pboxc{$2^{13}$} & \pboxc{$2^{14}$} & \pboxc{$2^{15}$} & \pboxc{$2^{16}$}\\
+\hline\hline
+\multirow{3}{2cm}{square roots} & \Romnum{1} & 0.2 & 0.4 & 1.2 & 3.5 & 11 & 33 & 109 & 365 & 1262 & 
+4466 & 16246 & 60689 \\  
+& \Romnum{2} & 0.3 & 0.6 & 1.5 & 4.0 & 12 & 36 & 114 & 360 & 1140 & 3610 & 11507 & 36938 \\ 
+& \Romnum{3} & 0.2 & 0.5 & 1.2 & 2.9 & 8 & 23 & 73 & 232 & 734 & 2309 & 7368 & 23604 \\ 
+\hline\hline
+\multirow{3}{2cm}{Frobenius $+$ finding $(a_1, a_2)$} & \Romnum{1} & 0.5 & 1.1 & 2.8 & 6.5 & 14 & 32 
+& 73 & 164 & 368 & 816 & 2020 & 4827  \\
+& \Romnum{2} & 0.5 & 1.1 & 2.7 & 6.5 & 14 & 32 & 72 & 162 & 366 & 813 & 2011 & 4827  \\
+& \Romnum{3} & 0.4 & 1.0 & 2.3 & 5.4 & 12 & 27 & 62 & 139 & 309 & 657 & 1609 & 3740  \\
+\end{tabular}
+\caption{Timings for lifting $2^k$-torsion}
+\label{table:2-tor-timings}
+\end{table}
+\end{center}
+
+
+
+
+
+
+
+
+
+

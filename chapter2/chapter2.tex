@@ -1,0 +1,512 @@
+\chapter{Elliptic Curves Over Finite Fields}
+\label{chapter:elli-pointcount}
+
+Let $\vmathbb{F}_q$ be a finite field where $q = p^n$ is a power of a prime. Then, the group 
+$E(\vmathbb{F}_q)$ is finite. As a finite abelian group, its order is one of the most important 
+quantities attached to it. Computing the quantity $\#E(\vmathbb{F}_q)$ is referred to as 
+\textit{point counting}. In this chapter, we present some point counting algorithms. We start by 
+deducing some general properties of the endomorphisms of $E(\vmathbb{F}_q)$ by means of the Weil 
+pairing. Then we prove the Hasse's theorem which puts a bound on the number of points. Before the 
+final section, we will give some comments on the structure of $E(\vmathbb{F}_q)$.
+
+
+
+
+
+
+
+
+
+\section{The Weil pairing}
+
+The Weil pairing, introduced by Weil \cite{Weilp1940}, is a major computational and theoretical tool 
+in the theory of elliptic curves, connecting the torsion subgroups to the roots of 
+unity\footnote{The Weil pairing is of great importance in pairing based cryptography. See  chapters 
+IX and X of \cite{Blake2004} for details. Also see \cite{Miller2004} for an efficient computation of 
+the pairing.}. 
+\begin{theorem}
+\label{theorem:Weil-pairing}
+Let $E$ be an elliptic curve over a field $k$ and let $m$ be a positive integer such that 
+$\fieldchar(k) \nmid m$. Let also $\mu_m \subset \overline{k}^\times$ be the subgroup of $m$-th 
+roots of unity. Then there exist a mapping 
+$$
+e_m: E[m] \times E[m] \longrightarrow \mu_m
+$$
+called the Weil pairing with the following properties:
+\begin{enumerate}
+\item 
+Bilinearity
+\begin{align*}
+e_m(S_1 + S_2, T) &= e_m(S_1, T)e_m(S_2, T) \\
+e_m(S, T_1 + T_2) &= e_m(S, T_1)e_m(S, T_2), & \text{for all }\: T, T_1, T_2, S, S_1, S_2 \in E[m]. 
+\end{align*}
+\item
+Nondegeneracy.
+\begin{align*}
+e_m(S, T) = 1 \text{ for all } T \in E[m] \Leftrightarrow S = \infty \\
+e_m(S, T) = 1 \text{ for all } S \in E[m] \Leftrightarrow T = \infty
+\end{align*}
+\item
+Identity. $e_m(T, T) = 1$ for all $T \in E[m]$.
+\item
+Alternation. $e_m(S, T) = e_m(T, S)^{-1}$ for all $S, T \in E[m]$.
+\item
+Endomorphism compatibility. For any $\alpha \in \ringofend(E)$, $e_m(\alpha(S), \alpha(T)) = e_m(S, 
+T)^{\deg \alpha}$.
+\item
+\label{item:Weil-pair-aut}
+Galois invariancy. $e_m(\sigma S, \sigma T) = \sigma(e_m(S, T))$ for any $\sigma \in 
+\gal(\overline{k} / k)$, where $\gal(\overline{k} / k)$ is the Galois group of the extension 
+$\overline{k} / k$. 
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+The proof needs some knowledge of divisors on elliptic curves, which is beyond the scope of this 
+chapter. See \cite[Sec. 3.8]{Silverman2009}.
+\end{proof}
+\textbf{Remark.} In some cases, one may work in a subfield of $\overline{k}$ over which the full 
+$n$-torsion may not be available. There is a pairing, called \textbf{Tate-Lichtenbaum Pairing}, that 
+can be used in those cases \cite{Frey1994, Lichtenbaum1969}.
+
+Since $\fieldchar(k) \nmid m$, we have $E[n] \cong \vmathbb{Z}_n^2$ by 
+\reftheorem{theorem:n-torsion-struct} i.e. $E[m]$ is a $\vmathbb{Z}$-module of rank $2$. If $\alpha$ 
+is an endomorphism of $E$ then $\alpha\vert_{E[m]}$ is a homomorphism of $\vmathbb{Z}$-modules. 
+Therefore, the action of $\alpha$ on a basis $\{B_1, B_2\}$ of $E[m]$ is a matrix $\alpha_m = 
+[\alpha_{ij}]_{2 \times 2}$ over $\vmathbb{Z}_n$.
+\begin{theorem}
+\label{theorem:endo-deg-det}
+Let $E$ be an elliptic curve defined over a field $k$, and $\alpha$ be a nontrivial endomorphism of 
+$E$. Let $n$ be a positive integer such that $\fieldchar(k) \nmid n$. Then $\det(\alpha_n) \equiv 
+\deg \alpha \pmod n$.
+\end{theorem}
+\begin{proof}
+Let $e_n(B_1, B_2)^k = 1$. Then for every $T \in E[n]$,
+\begin{align*}
+e_n(kB_1, T) 
+&= e_n(kB_1, aB_1 + bB_2) \quad \text{for some } a, b \in \vmathbb{Z}_n \\ 
+&= e_n(B_1, B_1)^{ak}e_n(kB_1, B_2)^b \quad \text{by bilinearity}\\
+&= e_n(B_1, B_2)^{kb} = 1 \quad \text{by bilinearity and identity}
+\end{align*}
+which implies that $kB_1 = \infty$, and hence $n \mid k$. Thus, $e_n(B_1, B_2)$ is a primitive 
+$n$-th root of unity. Therefore, by the properties of the Weil pairing, 
+\begin{align*}
+e_n(B_1, B_2)^{\deg \alpha} 
+&= e_n(\alpha(B_1), \alpha(B_2)) = e_n(\alpha_{11}B_1 + \alpha_{21}B_2, \alpha_{12}B_1 + 
+\alpha_{22}B_2) \\
+&= e_n(B_1, B_1)^{\alpha_{11}\alpha_{12}}e_n(B_1, B_2)^{\alpha_{11}\alpha_{22}}e_n(B_2, 
+B_1)^{\alpha_{21}\alpha_{12}}e_n(B_2, B_2)^{\alpha_{21}\alpha_{22}} \\
+&= e_n(B_1, B_2)^{\alpha_{11}\alpha_{22} - \alpha_{12}\alpha_{21}} = e_n(B_1, B_2)^{\det(\alpha_n)}
+\end{align*}
+which implies $\det(\alpha_n) \equiv \deg \alpha \pmod n$, since $e_n(B_1, B_2)$ is a primitive 
+$n$-th root of unity.
+\end{proof}
+\begin{corollary}
+\label{corollary:homo-lin-deg}
+Let $\varphi, \psi \in \ringofend(E)$, and $a, b$ be integers. Then for the endomorphism $a\varphi + 
+b\psi \in \ringofend(E)$, $\deg(a\varphi + b\psi) = a^2\deg \varphi + b^2\deg \psi + ab(\deg(\varphi 
++ \psi) - \deg\varphi - \deg\psi)$.
+\end{corollary}
+\begin{proof}
+Let $\varphi_n$ and $\psi_n$ be the matrices representing $\varphi\vert_{E[n]}$ and 
+$\psi\vert_{E[n]}$ respectively. Then $(a\varphi + b\psi) \vert_{E[n]}$ is represented by 
+$a\varphi_n + b\psi_n$. It can easily be seen that $\det(a\varphi_n + b\psi_n) = a^2\det(\varphi_n) 
++ b^2\det(\psi_n) + ab(\det(\varphi_n + \psi_n) - \det(\varphi_n) - \det(\psi_n))$ which implies 
+$\deg(a\varphi + b\psi) \equiv a^2\deg \varphi + b^2\deg \psi + ab(\deg(\varphi + \psi) - 
+\deg\varphi + \deg\psi) \pmod n$. Since the degrees are finite and this holds for infinitely many 
+$n$, it is an equality. 
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+\section{The Hasse's Theorem}
+In this section, we prove the following result, first proved by Hasse \cite{Hasse1934} in 1934. 
+\begin{theorem}[\textbf{Hasse}]
+\label{theorem:Hasse}
+Let $E$ be an elliptic curve over the finite field $\vmathbb{F}_q$, and let $\phi_q$ be the Frobenius 
+endomorphism of $E$. Assume $\#E(\vmathbb{F}_q) = q + 1 - t$ for some integer $t$. Then
+\begin{enumerate}
+\item 
+\label{item:hasse-bound}
+$\abs{t} \le 2 \sqrt{q}$.
+\item
+\label{item:hasse-frob-char}
+the endomorphism $\phi_q^2 - t\phi_q + q \in \ringofend(E)$ is trivial.
+\end{enumerate}
+Moreover, $t$ is the unique integer $\ell$ such that $\phi_q^2 - \ell\phi_q + q = 0$.
+\end{theorem}
+\textbf{Proof of \ref{item:hasse-bound}}. Let $a$ and $b$ be nonzero integers. Then by 
+\refcorollary{corollary:homo-lin-deg},
+\begin{align*}
+\deg(a\phi_q - b) 
+&= a^2\deg \phi_q + b^2\deg(-id) + ab(\deg(\phi_q - 1) -a\deg \phi_q - b\deg(-id)) \\
+&= a^2q + b^2 + ab(\#E(\vmathbb{F}_q) - q - 1) \quad \text{by 
+\refproposition{proposition:Frob-ker-E}} \\
+&= a^2q + b^2 - abt
+\end{align*}
+Since $\deg(a\phi_q - b) \ge 0$, we have $a^2q + b^2 - abt \ge 0$ hence $q + (b / a)^2 - (b / a)t 
+\ge 0$. This is true for all rational numbers $b / a$, and since the set of such numbers is dense in 
+$\vmathbb{R}$, we have $x^2 - tx + q \ge 0$ for all $x \in \vmathbb{R}$. This implies that $t^2 - 4q 
+\ge 0$ which yields the result. \hfill $\square$\\
+To prove part \ref{item:hasse-frob-char}, we need the following result from commutative algebra.
+\begin{lemma}
+\label{lemma:fg-module-endo}
+Let $R$ be a commutative ring, and let $M$ be a finitely generated $R$-module of rank $n$. Let $I$ 
+be an Ideal of $R$, and let $\varphi$ be an $R$-module endomorphism of $M$ such that $\varphi(M) 
+\subseteq IM$. Then $\varphi$ satisfies an equation of the form
+$$
+\varphi^n + a_1\varphi^{n - 1} + \cdots + a_{n - 1}\varphi + a_n = 0
+$$
+where $a_i \in I, \: i = 1, \dots, n$.
+\end{lemma}
+\begin{proof}
+See \cite[page 21]{Atiyah1969}.
+\end{proof}
+\textbf{Proof of \ref{item:hasse-frob-char}}. Let $n$ be a positive integer relatively prime to $q$. 
+As noted earlier, $E[n] \cong \vmathbb{Z}_n^2$ is a $\vmathbb{Z}_n$-module of rank 2. Let $I = 
+\vmathbb{Z}_n$ be the unit ideal of $\vmathbb{Z}_n$. For the endomorphism $(\phi_q)_n = 
+\phi_q\vert_{E[n]}$ of $E[n]$, where $\phi_q$ is the Frobenius endomorphism, we have 
+$(\phi_q)_n(E[n]) \subseteq E[n] = IE[n]$. So, by \reflemma{lemma:fg-module-endo}, $(\phi_q)_n^2 + 
+a(\phi_q)_n + b = 0$ for some $a, b \in \vmathbb{Z}_n$. Let $(\phi_q)_n$ be represented by 
+$[a_{ij}]_{2 \times 2}$. Then, by elementary linear algebra, $a_{11} + a_{22} = \trace((\phi_q)_n) = 
+a$, and $a_{11}a_{22} - a_{12}a_{21} = \det((\phi_q)_n) = b$. On the other hand, since $\phi_q - 1$ 
+is separable, 
+\begin{align*}
+\#E(\vmathbb{F}_q) &= \ker(\phi_q - 1) \quad \text{by \refproposition{proposition:Frob-ker-E}} \\
+&= \deg(\phi_q - 1) \equiv \det((\phi_q)_n - I_2) \pmod n \quad \text{by 
+\reftheorem{theorem:endo-deg-det}} \\
+&= a_{11}a_{22} - a_{12}a_{21} - (a_{11} + a_{22}) + 1 = \det((\phi_q)_n) - \trace((\phi_q)_n) + 1 
+\\
+&= q - a + 1 \quad \text{by \reftheorem{theorem:endo-deg-det}}
+\end{align*}
+Therefore, $a = t, b = q$ hence $(\phi_q)_n^2 + t(\phi_q)_n + q = 0$. This means that $(\phi_q^2 + 
+t\phi_q + q)\vert_{E[n]} = 0$. Since this holds for infinitely many $n$, the endomorphism $\phi_q^2 
++ t\phi_q + q$ has an infinite kernel which is not possible by \refproposition{proposition:iso-ker}. 
+So, it is the zero endomorphism. For the uniqueness assume that $\phi_q^2 + s\phi_q + q = 0$ for 
+some integer $s$. Then $(t - s)\phi_q = (\phi_q^2 + t\phi_q + q) - (\phi_q^2 + s\phi_q + q) = 0$. 
+Since $\phi_q$ is surjective, $[t - s]E(\overline{\vmathbb{F}_q}) = \infty$ which implies that the 
+endomorphism $[t - s]$ is trivial. This is not true unless $t - s = 0$. This completes the proof. 
+\hfill $\square$
+
+
+
+
+
+
+
+
+
+\section{The structure of $E(\vmathbb{F}_q)$}
+
+The group $E(\vmathbb{F}_q)$ is a finite abelian group. So, by the fundamental theorem of finite 
+abelian groups, $E(\vmathbb{F}_q)$ is isomorphic to a direct sum of cyclic groups $E(\vmathbb{F}_q) 
+\cong \vmathbb{Z}_{n_1} \oplus \vmathbb{Z}_{n_2} \oplus \cdots \oplus \vmathbb{Z}_{n_k}$ such that $n_i 
+\mid n_{i + 1}$ for $i = 1, \dots, k - 1$. This means that there are $n_1^k$ elements of 
+$E(\vmathbb{F}_q)$ of order $n_1$. But, by \reftheorem{theorem:n-torsion-struct}, there are $\le 
+n_1^2$ such elements. Thus, $k \le 2$ hence
+$$
+E(\vmathbb{F}_q) \cong \vmathbb{Z}_{n}  \quad \text{or} \quad E(\vmathbb{F}_q) \cong \vmathbb{Z}_{n_1} 
+\oplus \vmathbb{Z}_{n_2}
+$$
+for some positive integer $n$, or some positive integers $n_1, n_2$ with $n_1 \mid n_2$.  We show 
+that $n_1 \mid q - 1$ in the second case. Let first prove the following.
+\begin{lemma}
+\label{lemma:fq-structure-mu}
+Let $E$ be an elliptic curve defined over a field $k$, and let $n$ be a positive integer not 
+divisible by $\fieldchar(k)$. If $E[n] \subseteq E(k)$ then $\mu_n \subset k$ where $\mu_n$ is the 
+group of $n$-th roots of unity.
+\end{lemma}
+\begin{proof}
+Let $e_n$ be the Weil pairing on the $n$-torsion $E[n]$, and let $\{B_1, B_2\}$ be a basis for 
+$E[n]$. Then $e_n(B_1, B_2)$ is a primitive root of unity by the proof of 
+\reftheorem{theorem:endo-deg-det}. Since $E[n] \subset E(k)$, $B_1, B_2 \in E(k)$. For any $\sigma 
+\in \gal(\overline{k} / k)$ we have $\sigma(e_n(B_1, B_2)) = e_n(\sigma B_1, \sigma B_2) = e_n(B_1, 
+B_2)$ by part $\ref{item:Weil-pair-aut}$ of \reftheorem{theorem:Weil-pairing}. By the fundamental 
+theorem of Galois theory, the primitive $n$-th root of unity is contained in $k$ hence $\mu_n 
+\subset k$.
+\end{proof}
+Since $\vmathbb{Z}_{n_1} \oplus \vmathbb{Z}_{n_1} \subset E(\vmathbb{F}_q)$, $E(\vmathbb{F}_q)$ contains 
+all $n_1^2$ elements of the $n_1$-torsion subgroup hence $p \nmid n_1$. By 
+\reflemma{lemma:fq-structure-mu}, $\mu_{n_1} \subset \vmathbb{F}_q$ hence $n_1 \mid q - 1$.
+
+So, we have determined the structure of $E(\vmathbb{F}_q)$. The converse to this problem is that 
+given a finite field $\vmathbb{F}_q$ and a positive integer $\ell$, is there an elliptic curve $E$ 
+over $\vmathbb{F}_q$ such that $\#E(\vmathbb{F}_q) = \ell$? The answer to this is given in 
+\cite{Ruck1987} and \cite{Waterhouse1969}.
+
+
+
+
+
+
+
+
+
+
+
+\section{Point counting on $E(\vmathbb{F}_q)$}
+\label{section:elli-pointcount}
+
+There have been various approaches for determining the number of rational points on elliptic curves 
+over finite fields, see \cite{Blake1999} for a survey. In this section, we present three point 
+counting algorithms on elliptic curves over finite fields: the naive counting, the baby-step 
+giant-step, and the Schoof's algorithm. Over this section, by a polynomial time algorithm we shall 
+mean an algorithm with running time polynomial in $\log q$. Therefore, for example, an algorithm 
+with the running time $O(\sqrt[4]{q})$, or more generally $O(q^{O(1)})$, is not a polynomial time 
+algorithm. Let first make the following observation. 
+\begin{theorem}[\textbf{Weil}]
+\label{theorem:Weil-subfc}
+Let $E$ be an elliptic curve over $\vmathbb{F}_q$, and let $\#E(\vmathbb{F}_q) = q + 1 - t$. Write 
+$x^2 - tx + q = (x - \lambda_1)(x - \lambda_2)$ with $\lambda_1, \lambda_2 \in \vmathbb{C}$. Then 
+$\#E(\vmathbb{F}_{q^n}) = q^n + 1 - (\lambda_1^n + \lambda_2^n)$ for all $n \ge 0$.
+\end{theorem}
+\begin{proof}
+Let $\ell$ be a positive integer relatively prime to $q$, and let $\phi_q$ be the Frobenius 
+endomorphism of $E$. Then $(\phi_q)_\ell^2 - t(\phi_q)_\ell + q = 0$ by \reftheorem{theorem:Hasse}. 
+So, $\lambda_1$ and $\lambda_2$ are the eigenvalues of $(\phi_q)_\ell$ hence $\trace((\phi_q)_\ell) 
+= \lambda_1 + \lambda_2$. From linear algebra we have $\trace((\phi_q)_\ell^n) = \lambda_1^n + 
+\lambda_2^n$ for any positive integer $n$. Also, it is trivial that $\det(A - I_2) = 1 + \det(A) - 
+\trace(A)$ for all $2 \times 2$ matrices $A$. Thus
+\begin{align*}
+\#E(\vmathbb{F}_{q^n}) 
+&= \#\ker(\phi_q^n - 1) = \deg(\phi_q^n - 1) \equiv \det((\phi_q)_\ell^n - I_2) \pmod \ell \\
+&= 1 + \det((\phi_q)_\ell^n) - \trace((\phi_q)_\ell^n) = 1 + q^n - (\lambda_1^n + \lambda_2^n)
+\end{align*}
+Since this holds for infinitely many $\ell$, it must be an equality. 
+\end{proof}
+\reftheorem{theorem:Weil-subfc} says that if we know $\#E(\vmathbb{F}_q)$ then we can easily compute 
+$\#E(\vmathbb{F}_{q^n})$. So if, for example, the elements of $\vmathbb{F}_q$ are represented by 
+polynomials, which is usually the case, then computing $\#E(\vmathbb{F}_{q^n})$ amounts to computing 
+$\#E(\vmathbb{F}_p)$. 
+
+
+
+\subsection{The naive method}
+
+When the size of the field $\vmathbb{F}_q$ is small we can simply run through all its elements to 
+find pairs satisfying the equation of $E$. This amounts to check, for every $x \in \vmathbb{F}_q$, if 
+$x^3 + Ax + B$ is a square in $\vmathbb{F}_q$. Let 
+$$
+\left(\frac{a}{\vmathbb{F}_q}\right) =
+\begin{cases}
+1 & \text{ if } a \text{ is a square in } \vmathbb{F}_q^{\times}\\
+-1 & \text{ if } a \text{ is not a square in } \vmathbb{F}_q^{\times}\\
+0 & \text{ otherwise}
+\end{cases}
+$$
+be the Legendre symbol over $\vmathbb{F}_q$. For every $\alpha \in \vmathbb{F}_q$ if $(\frac{\alpha^3 
++ A\alpha + B}{\vmathbb{F}_q}) = 1$ or $-1$ or $0$ then there are two points $(\alpha, \pm y)$ or no 
+points or one point $(\alpha, 0)$ on $E(\vmathbb{F}_q)$ respectively. Therefore, the number of points 
+with first coordinate $\alpha$ is $1 + (\frac{\alpha^3 + A\alpha + B}{\vmathbb{F}_q})$. Summing over 
+all $\alpha \in \vmathbb{F}_q$, and taking into account the point $\infty$, gives
+$$
+\#E(\vmathbb{F}_q) = 1 + \sum_{\alpha \in \vmathbb{F}_q} \left(1 + \left( \frac{\alpha^3 + A\alpha + 
+B}{\vmathbb{F}_q} \right) \right) = q + 1 + \sum_{\alpha \in \vmathbb{F}_q} \left( \frac{\alpha^3 + 
+A\alpha + B}{\vmathbb{F}_q} \right)
+$$
+
+\begin{algorithm}
+[Naive algorithm for counting points on $E(\vmathbb{F}_q)$]
+\label{algorithm:naive-count}
+\begin{algorithmic}[1]
+\REQUIRE The elliptic curve $E$ defined by $y^2 = x^3 + Ax + B$ with $A, B \in \vmathbb{F}_q$
+\ENSURE  The number of points on $E(\vmathbb{F}_q)$
+\STATE $n \leftarrow q + 1$
+\FORALL {$\alpha \in \vmathbb{F}_q$}
+	\STATE $n \leftarrow n + \left( \frac{\alpha^3 + A\alpha + B}{\vmathbb{F}_q} \right)$
+\ENDFOR
+\RETURN $n$
+\end{algorithmic}
+\end{algorithm}
+
+We have $\left( \frac{\alpha^3 + A\alpha + B}{\vmathbb{F}_q} \right) = (\alpha^3 + A\alpha + B)^{(q - 
+1) / 2}$. So the Legendre symbol can be computed in $O(\log q)$ multiplications in $\vmathbb{F}_q$. 
+Therefore, the running time of \refalgorithm{algorithm:naive-count} is $O(q\log q)$ operations in 
+$\vmathbb{F}_q$.
+
+
+
+\subsection{The Baby-step Giant-step}
+
+Assume we know how to compute the order of an arbitrary point $P \in E(\vmathbb{F}_q)$. By the 
+Hasse's theorem, $q + 1 -2\sqrt{q} \le \#E(\vmathbb{F}_q) \le q + 1 + 2\sqrt{q}$. For large enough 
+$q$ there is exactly one multiple of $\#E(\vmathbb{F}_q)$ in this interval. The order of any point $P 
+\in E(\vmathbb{F}_q)$ divides the order of the group $E(\vmathbb{F}_q)$. So, for a randomly selected 
+point $P_1 \in E(\vmathbb{F}_q)$, if $N_1 = \order(P_1)$ has only one multiple in the above interval 
+then $\#E(\vmathbb{F}_q) = N_1$, otherwise select another point $P_2$ and let $N_2 = \lcm(N_1, 
+\order(P_2))$ and do the same for $N_2$. This process continues, by selecting further random points 
+and taking least common multiples, until $N_k$ has a unique multiple in the Hasse interval for some 
+$k$.
+
+To compute the order of a point $P \in E(\vmathbb{F}_q)$, we can first find an integer $\ell$ such 
+that $[\ell] P = \infty$. Then \refalgorithm{algorithm:elem-ord-ann} computes the order of $P$ from 
+$\ell$.
+
+\begin{algorithm}
+[Compute the order of a point from a given annihilator]
+\label{algorithm:elem-ord-ann}
+\begin{algorithmic}[1]
+\REQUIRE A point $P \in E(\vmathbb{F}_q)$ and an integer $\ell$ such that $[\ell] P = \infty$
+\ENSURE  The order of $P$
+\STATE $n \leftarrow \ell$
+\FORALL {prime divisors $p$ of $n$}
+	\WHILE {$[n] P = \infty$}
+		\STATE $n \leftarrow n / p$
+	\ENDWHILE
+\ENDFOR
+\RETURN $n$
+\end{algorithmic}
+\end{algorithm}
+
+To find an integer $q + 1 -2\sqrt{q} \le \ell \le q + 1 + 2\sqrt{q}$ such that $[\ell] P = \infty$, 
+one can try all elements of this interval which takes around $4\sqrt{q}$ steps. But, using an 
+adaptation of the Shanks's algorithm \cite{Shank1971}, the number of steps can be reduced to around 
+$4\sqrt[4]{q}$ as follows. Let $m > \sqrt[4]{q}$ be an integer. Compute the sequences of points $B = 
+\{ [j]P, \: j = 0, \pm 1, \dots, \pm m \}$ and $G = \{[q + 1 + 2mk]P, \: k = -m, -m + 1, \dots, m - 
+1, m\}$. Then there is an element occurring in both sequences, because: in the identity 
+$\#E(\vmathbb{F}_q) = q + 1 - t$ we have $\abs{t} \le 2m^2$, then there are always $-m < t_0 \le m$ 
+and $-m \le t_1 \le m$ such that $t = 2mt_1 + t_0$. Now, letting $k = -t_1$ we have $G \ni [q + 1 
+-2mt_1]P = [q + 1 - t + t_0]P = [\#E(\vmathbb{F}_q) + t_0]P = [t_0]P \in B$.
+
+\begin{algorithm}
+[baby-step giant-step point counting]
+\label{algorithm:count-baby-giant}
+\begin{algorithmic}[1]
+\REQUIRE An elliptic curve $E$ over $\vmathbb{F}_q$
+\ENSURE  The number of point on $E(\vmathbb{F}_q)$
+\STATE $m \leftarrow \lceil \sqrt[4]{q} \rceil$, $d \leftarrow 1$
+\STATE select a random point $P \in E(\vmathbb{F}_q)$
+\label{step:b-g-rand}
+\STATE $P_1 \leftarrow [2m]P$
+\STATE $B_0 \leftarrow \infty$
+\STATE $G \leftarrow [q + 1]P - [m]P_1,$, $j \leftarrow 0$
+\FOR {$i = 1$ to $m$}
+	\STATE $B_i \leftarrow B_{i - 1} + P$
+\ENDFOR
+\WHILE {$G \ne \pm B_i, \: 0 \le i \le m$}
+	\STATE $G \leftarrow G + P_1$, $j \leftarrow j + 1$
+\ENDWHILE
+\STATE $\ell \leftarrow q + 1 + 2mj \mp i$
+\STATE compute $\order(P)$ using \refalgorithm{algorithm:elem-ord-ann} with input $\ell$
+\STATE $d \leftarrow \lcm(d, \order(P))$
+\IF {$d$ has only one multiple in the range $[q + 1 - 2\sqrt{q}, q + 1 + 2\sqrt{q}]$}
+	\RETURN $d$
+\ENDIF
+\STATE go to \refstep{step:b-g-rand}
+\end{algorithmic}
+\end{algorithm}
+
+It is not hard to show that the expected running time of \refalgorithm{algorithm:count-baby-giant} 
+is $O(\sqrt[4]{q}\log^3 q)$ group operations, and it needs storage for $O(\sqrt[4]{q})$ group 
+elements, see \cite{Enge1999} for details.
+
+
+
+
+
+\subsection{Schoof's Algorithm}
+
+The first polynomial time algorithm for counting points on $E(\vmathbb{F}_q)$ was introduced by 
+Schoof \cite{Schoof1985}. By the Hasse's theorem $\#E(\vmathbb{F}_q) = q + 1 - t$ with $\abs{t} \le 
+2\sqrt{q}$. The idea of the algorithm is to compute $t$ modulo many small primes, and then recombine 
+the results using the Chinese remaindering theorem to obtain $t$. Let $\phi_q$ be the Frobenius map 
+on $E$. By \reftheorem{theorem:Hasse}, $\phi_q^2 - t\phi_q + q = 0$. Let $\gamma > 2$ be a prime not 
+equal to  $\fieldchar(\vmathbb{F}_q) = p$. Assume $P = (x, y) \ne \infty$ is a $\gamma$-torsion 
+point. Then $\phi_q^2(P) - [t_\gamma]\phi_q(P) + [q_\gamma]P = 0$ where $t_\gamma \equiv t \pmod 
+\gamma$, and $q_\gamma \equiv q \pmod \gamma$. In other words,
+\begin{equation}
+\label{equation:Schoof-lt}
+(x^{q^2}, y^{q^2}) -[t_\gamma](x^q, y^q) + [q_\gamma](x, y) = 0
+\end{equation}
+hence $[t_\gamma](x^q, y^q) = (x^{q^2}, y^{q^2}) + [q_\gamma](x, y)$. Since we know the right side, 
+and $\gamma$ is small, we can try all values in the range $[0, \gamma - 1]$ to find the $t_\gamma$ 
+satisfying the above equation. The problem is how to obtain a point $P \in E[\gamma]$. As we saw in 
+\refsection{section:div-poly}, $P$ is a $\gamma$-torsion if and only if $\psi_\gamma(P) = 0$, where 
+$\psi_\gamma$ is the $\gamma$-th division polynomial. Since $\gamma$ is odd, $\psi_\gamma \in 
+\vmathbb{F}_q[x]$. Therefore, we can compute a root of $\psi_\gamma$ to obtain the $x$-coordinate of 
+a $\gamma$-torsion point $P$, and then compute the $y$-coordinate using the equation of $E$. But, 
+the roots of the division polynomials $\psi_\gamma$ usually occupy in extensions $K / \vmathbb{F}_q$ 
+of fairly large degree. The crucial observation is that \refequation{equation:Schoof-lt} holds for 
+all $\gamma$-torsion points so that we can work modulo $\psi_\gamma$, i.e. work with all 
+$\gamma$-torsion points simultaneously. 
+
+In other words, if $f$ and $g$ are the $x$-coordinates of $[\alpha](x^q, y^q)$ and $(x^{q^2}, 
+y^{q^2}) + [q_\gamma](x, y)$, for some integer $\alpha$, respectively, then $\alpha$ is the desired 
+value for $t_\gamma$ if $f - g \equiv 0 \pmod {\psi_\gamma}$. Therefore, we shall do all 
+computations in the quotient ring $A_\gamma = \vmathbb{F}_q[x, y] / \langle \psi_\gamma(x), y^2 - 
+f(x) \rangle$ where $y^2 = f(x)$ is the equation of $E$. Let $\{ \gamma_i \}_{i \le k}$ be the set 
+of primes required by the Chinese remaindering theorem to uniquely reconstruct the value of $t$. 
+Then we should have
+\begin{equation}
+\label{equation:Schoof-ch-req}
+\prod_{i = 1}^k \gamma_i \ge 4\sqrt{q}
+\end{equation}
+
+\begin{algorithm}
+[Schoof's point counting]
+\label{algorithm:count-Schoof}
+\begin{algorithmic}[1]
+\REQUIRE An elliptic curve $E$ over $\vmathbb{F}_q$
+\ENSURE  The number of point on $E(\vmathbb{F}_q)$
+\STATE $M \leftarrow 1$, $\gamma \leftarrow 3$
+\WHILE {$M \le 4\sqrt{q}$}
+	\STATE $P \leftarrow (x^q, y^q) \mod {\langle \psi_\gamma(x), y^2 - f(x) \rangle}$
+	\label{step:Schoof-P}
+	\STATE $Q \leftarrow (x^{q^2}, y^{q^2}) + [q_\gamma](x, y) \mod {\langle \psi_\gamma(x), y^2 - 
+f(x) \rangle}$
+	\label{step:Schoof-Q}
+	\FOR {$n = 0$ to $\gamma - 1$}
+		\IF {$Q  \equiv 0 \pmod {\langle \psi_\gamma(x), y^2 - f(x) \rangle}$}
+			\STATE $t_\gamma \leftarrow n$, go to \refstep{step:Schoof-M}
+		\ELSE 
+			\STATE $Q \leftarrow Q - P$
+		\ENDIF
+	\ENDFOR
+	\STATE $M \leftarrow M.\gamma$
+	\label{step:Schoof-M}
+	\STATE $\mathcal{P} \leftarrow \mathcal{P} \cup \gamma$
+	\STATE $\gamma \leftarrow$ the next largest prime
+	\label{step:Schoof-gamma}	
+\ENDWHILE
+\STATE use the Chinese remaindering theorem to solve the system \\ of congruences $t \equiv t_\gamma 
+\pmod \gamma, \: \gamma \in \mathcal{P}$.
+\RETURN $q + 1 - t$ 
+\end{algorithmic}
+\end{algorithm}
+
+The prime number theorem says that $\lim_{x \rightarrow \infty} \pi(x)\log(x) / x = 1$ where 
+$\pi(x)$ is the number of primes not larger than $x$. It can be shown that this is equivalent to 
+$\lim_{x \rightarrow \infty} \vartheta(x) / x = 1$ where 
+$$
+\vartheta(x) = \sum_{\substack{\gamma \le x \\ \gamma \text{ prime}}} \log \gamma
+$$
+is the Chebyshev's $\vartheta$-function. This implies
+$$
+1 = \lim_{x \rightarrow \infty} \frac{\vartheta(x)}{x} = \lim_{x \rightarrow \infty} \frac{1}{x} 
+\sum_{\substack{\gamma \le x \\ \gamma \text{ prime}}} \log \gamma = \lim_{x \rightarrow \infty} 
+\frac{1}{x} \log \prod_{\substack{\gamma \le x \\ \gamma \text{ prime}}} \gamma
+$$
+which means that $\prod_{\substack{\gamma \le x \\ \gamma \text{ prime}}} \gamma \approx e^x$. So if 
+we take $\gamma_k \approx \frac{1}{2}\log(16q) \in O(\log q)$ then the set of primes $\{ \gamma_i 
+\}_{i \le k}$ satisfies condition (\ref{equation:Schoof-ch-req}). Therefore, for any prime $\gamma$ 
+produced in \refstep{step:Schoof-gamma} of \refalgorithm{algorithm:count-Schoof}, we have $\gamma 
+\in O(\log q)$. The outer loop in \refalgorithm{algorithm:count-Schoof} iterates $O(\log q)$ times. 
+Steps \ref{step:Schoof-P} and \ref{step:Schoof-Q} require $O(\log q)$ multiplications of polynomials 
+of order $O(\gamma^2)$ in $A_\gamma$ which can be accomplished in $O(M(\gamma^2)\log q) = O(M(\log^2 
+q)\log q)$ operations in $\vmathbb{F}_q$. The total cost of the execution of the inner loop is 
+$O(\gamma M(\gamma^2)) = O(M(\log^2 q)\log q)$ operations in $\vmathbb{F}_q$. Therefore, the running 
+time of \refalgorithm{algorithm:count-Schoof} is $O(M(\log^2 q)\log^2 q)$ operations in 
+$\vmathbb{F}_q$.
+
+There have been many theoretical and practical improvements on the Schoof's algorithm, see, for 
+example, \cite{Blake1999, Elkies1998, Schoof1995}. An improvement suggested by Atkin and Elkis, 
+called Schoof-Elkies-Atkin (SEA) algorithm, is currently the fastest known algorithm for general 
+characteristics \cite{Blake1999}. There are other polynomial time algorithm, that work for small 
+characteristics, like Satoh's algorithm \cite{Satoh2000}. For refinements of Satoh's algorithm see 
+\cite{SatohSkTa2003, Satoh2002, VerPreVan2001}.
